@@ -17,7 +17,7 @@ I (Lei) have set up 2 scenes: `Dan_Track` and `Josh_Car`, and put some basic 3D 
 
 ## Handling Input
 
-I (Lei) suggest using Unity's Input System, it is better than the default `Unity.Input`. (Can be event-based rather than polling, and can map both mouse and touch to the same action)
+I (Lei) suggest using Unity's [Input System](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.7/manual/index.html), it is better than the default `Unity.Input`. (Can be event-based rather than polling, and can map both mouse and touch to the same action)
 
 `Assets -> AR Input Actions` is the action asset we are using. 
 
@@ -25,16 +25,20 @@ I am working on writing an input manager script so we can abstract it away, and 
 
 ## Logging
 
-I (Lei) suggest using my custom static logging class `XLogger`. 
+I (Lei) suggest using my custom static logging class `XLogger`, instead of using `Debug` directly.
 
 Usage is very simple: `XLogger.Log("Hello")` ,`XLogger.Log(Category.UI, "Hello")`  
 - there are also `LogWarning` and `LogError`
 - feel free to add categories to the `Category` enum
 - the benefits is first there is a category classification, and we can optionally hook the output to a debug console, so we can see the logs in the phone builds.
 
+Remember also to drag the `DebugConsole` Prefab into your scenes. 
+
+The global settings for logging is stored as a ScriptableObject in `Assets/Settings/LogSettings`, you can edit it in the inspector. 
+
 ## Important Unity Concepts
 
-Here are some key concepts I (Lei) suggest looking up
+Here are some key concepts I (Lei) suggest looking up:
 - Component system and the `MonoBehaviour` class
 - Physics: Colliders and RigidBodies
 - Materials 
