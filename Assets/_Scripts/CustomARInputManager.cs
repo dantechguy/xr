@@ -27,7 +27,7 @@ public class CustomARInputManager : MonoBehaviour
         var screenPos = actions_.TouchscreenGestures.TapStartPosition.ReadValue<Vector2>();
         XLogger.Log(Category.AR, $"Tap position: {screenPos}");
         
-        if (EventSystem.current.IsPointerOverGameObject())
+        if (IsPositionOverUI(screenPos))
         {
             XLogger.Log(Category.AR, "Pointer over UI");
             return;
@@ -50,5 +50,17 @@ public class CustomARInputManager : MonoBehaviour
         {
             prefabSpawner.SpawnObject(hits[0]);
         }
+    }
+
+    private bool IsPositionOverUI(Vector2 _screenPos)
+    {
+        var eventData = new PointerEventData(EventSystem.current)
+        {
+            position = _screenPos
+        };
+        var raycastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, raycastResults);
+        
+        return raycastResults.Count > 0; 
     }
 }
