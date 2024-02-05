@@ -8,7 +8,6 @@ using UnityEngine.XR.ARSubsystems;
 public class PrefabSpawner : MonoBehaviour
 {
     [SerializeField] private SpawnSettings spawnSettings;
-    [SerializeField] private int activePrefabIndex = 0;
 
     public void SpawnObject(ARRaycastHit _hit)
     {
