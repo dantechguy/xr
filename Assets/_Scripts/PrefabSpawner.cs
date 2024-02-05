@@ -13,9 +13,10 @@ public class PrefabSpawner : AbstractHitConsumer
     {
         SpawnObject(_hit);
     }
+
     public void SpawnObject(ARRaycastHit _hit)
     {
-        XLogger.Log(Category.AR, $"Raycast hit type: {_hit.hitType}");
+        XLogger.Log(Category.Spawn, $"Raycast hit type: {_hit.hitType}");
         if (_hit.trackable is not ARPlane plane)
         {
             XLogger.LogWarning(Category.AR, "Hit trackable is not a plane");
@@ -29,7 +30,7 @@ public class PrefabSpawner : AbstractHitConsumer
         }
 
         Pose hitPose = _hit.pose;
-        XLogger.Log(Category.AR, $"Hit pose: {hitPose.position}");
+        XLogger.Log(Category.Spawn, $"Hit pose: {hitPose.position}");
 
         // TODO: link with UI
         GameObject spawnPrefab = spawnSettings.GetActivePrefab();
