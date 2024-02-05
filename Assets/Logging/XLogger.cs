@@ -19,7 +19,9 @@ namespace Logging
         DebugConsole,
         Settings,
         AR,
-        Spawn
+        Spawn,
+        Input,
+        GamePhase
     }
 
     public interface ILogOutput
