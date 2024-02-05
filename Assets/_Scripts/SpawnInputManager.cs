@@ -6,30 +6,43 @@ using UnityEngine.InputSystem;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 
-public class CustomARInputManager : MonoBehaviour
+public class SpawnInputManager : MonoBehaviour
 {
     [SerializeField] private ARRaycastManager raycastManager;
     [SerializeField] private AbstractHitConsumer spawner;
 
     private ARInputActions actions_;
     private InputAction tapAction_;
+    private GamePhaseManger phaseManger_;
+
+    private void Start()
+    {
+        phaseManger_ = FindObjectOfType<GamePhaseManger>();
+    }
 
     private void OnEnable()
     {
-        actions_ = new ARInputActions();
+        if (actions_ == null)
+            actions_ = new ARInputActions();
         tapAction_ = actions_.TouchscreenGestures.Press;
         tapAction_.performed += OnTap;
         actions_.TouchscreenGestures.Enable();
     }
 
+    private void OnDisable()
+    {
+        tapAction_.performed -= OnTap;
+        actions_.TouchscreenGestures.Disable();
+    }
+
     private void OnTap(InputAction.CallbackContext _context)
     {
         var screenPos = actions_.TouchscreenGestures.TapStartPosition.ReadValue<Vector2>();
-        XLogger.Log(Category.AR, $"Tap position: {screenPos}");
+        XLogger.Log(Category.Input, $"Tap position: {screenPos}");
 
         if (IsPositionOverUI(screenPos))
         {
-            XLogger.Log(Category.AR, "Pointer over UI");
+            XLogger.Log(Category.Input, "Pointer over UI");
             return;
         }
 
@@ -39,8 +52,8 @@ public class CustomARInputManager : MonoBehaviour
         {
             if (hitObject.collider.CompareTag("Spawned"))
             {
-                XLogger.Log(Category.AR, "Hit spawned object");
-                Destroy(hitObject.collider.gameObject);
+                XLogger.Log(Category.Input, "Hit spawned object");
+                phaseManger_.SwitchPhase(GamePhaseManger.GamePhase.Select);
                 return;
             }
         }
