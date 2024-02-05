@@ -9,7 +9,7 @@ using UnityEngine.XR.ARSubsystems;
 public class CustomARInputManager : MonoBehaviour
 {
     [SerializeField] private ARRaycastManager raycastManager;
-    [SerializeField] private PrefabSpawner prefabSpawner;
+    [SerializeField] private AbstractHitConsumer spawner;
 
     private ARInputActions actions_;
     private InputAction tapAction_;
@@ -26,7 +26,7 @@ public class CustomARInputManager : MonoBehaviour
     {
         var screenPos = actions_.TouchscreenGestures.TapStartPosition.ReadValue<Vector2>();
         XLogger.Log(Category.AR, $"Tap position: {screenPos}");
-        
+
         if (IsPositionOverUI(screenPos))
         {
             XLogger.Log(Category.AR, "Pointer over UI");
@@ -48,7 +48,7 @@ public class CustomARInputManager : MonoBehaviour
         var hits = new List<ARRaycastHit>();
         if (raycastManager.Raycast(screenPos, hits, TrackableType.PlaneWithinPolygon))
         {
-            prefabSpawner.SpawnObject(hits[0]);
+            spawner.OnHit(hits[0]);
         }
     }
 
@@ -60,7 +60,7 @@ public class CustomARInputManager : MonoBehaviour
         };
         var raycastResults = new List<RaycastResult>();
         EventSystem.current.RaycastAll(eventData, raycastResults);
-        
-        return raycastResults.Count > 0; 
+
+        return raycastResults.Count > 0;
     }
 }

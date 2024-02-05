@@ -5,15 +5,15 @@ using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 
-public class PrefabSpawner : AbstractHitConsumer
+public class GameObjectMover : AbstractHitConsumer
 {
-    [SerializeField] private SpawnSettings spawnSettings;
+    [SerializeField] private GameObject gameObjectToSpawn;
 
     public override void OnHit(ARRaycastHit _hit)
     {
-        SpawnObject(_hit);
+        MoveObject(_hit);
     }
-    public void SpawnObject(ARRaycastHit _hit)
+    public new void MoveObject(ARRaycastHit _hit)
     {
         XLogger.Log(Category.AR, $"Raycast hit type: {_hit.hitType}");
         if (_hit.trackable is not ARPlane plane)
@@ -31,18 +31,7 @@ public class PrefabSpawner : AbstractHitConsumer
         Pose hitPose = _hit.pose;
         XLogger.Log(Category.AR, $"Hit pose: {hitPose.position}");
 
-        // TODO: link with UI
-        GameObject spawnPrefab = spawnSettings.GetActivePrefab();
-        GameObject spawnedObject = Instantiate(spawnPrefab, hitPose.position, hitPose.rotation, transform);
-        spawnedObject.transform.localScale = spawnSettings.globalScale * Vector3.one;
-    }
-
-    public void ApplyGlobalScale()
-    {
-        foreach (Transform child in transform)
-        {
-            if (!child.CompareTag("Spawned")) continue;
-            child.localScale = spawnSettings.globalScale * Vector3.one;
-        }
+        gameObjectToSpawn.transform.position = hitPose.position;
+        gameObjectToSpawn.transform.rotation = hitPose.rotation;
     }
 }
