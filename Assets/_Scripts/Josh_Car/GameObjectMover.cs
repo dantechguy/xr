@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using Logging;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
@@ -13,6 +14,18 @@ public class GameObjectMover : AbstractHitConsumer
     {
         MoveObject(_hit);
     }
+
+    public void MoveObject([CanBeNull] GameObject _gameObject, ARRaycastHit _hit)
+    {
+        if (_gameObject == null)
+        {
+            XLogger.LogWarning(Category.AR, "No game object to move");
+            return;
+        }
+        gameObjectToSpawn = _gameObject;
+        MoveObject(_hit);
+    }
+    
     public new void MoveObject(ARRaycastHit _hit)
     {
         XLogger.Log(Category.AR, $"Raycast hit type: {_hit.hitType}");

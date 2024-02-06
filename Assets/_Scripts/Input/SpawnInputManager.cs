@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Logging;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
@@ -10,6 +9,7 @@ public class SpawnInputManager : MonoBehaviour
 {
     [SerializeField] private ARRaycastManager raycastManager;
     [SerializeField] private AbstractHitConsumer spawner;
+    [SerializeField] private SelectionInfo selectionInfo;
 
     private ARInputActions actions_;
     private InputAction tapAction_;
@@ -40,7 +40,7 @@ public class SpawnInputManager : MonoBehaviour
         var screenPos = actions_.TouchscreenGestures.TapStartPosition.ReadValue<Vector2>();
         XLogger.Log(Category.Input, $"Tap position: {screenPos}");
 
-        if (IsPositionOverUI(screenPos))
+        if (InputUtils.IsPositionOverUI(screenPos))
         {
             XLogger.Log(Category.Input, "Pointer over UI");
             return;
@@ -50,9 +50,11 @@ public class SpawnInputManager : MonoBehaviour
         RaycastHit hitObject;
         if (Physics.Raycast(ray, out hitObject))
         {
-            if (hitObject.collider.CompareTag("Spawned"))
+            var selectable = hitObject.collider.GetComponentInParent<ARSpawnedSelectable>();
+            if (selectable != null)
             {
-                XLogger.Log(Category.Input, "Hit spawned object");
+                XLogger.Log(Category.Input, "Hit selectable spawned object");
+                selectable.OnSelect();
                 phaseManger_.SwitchPhase(GamePhaseManger.GamePhase.Select);
                 return;
             }
@@ -65,15 +67,4 @@ public class SpawnInputManager : MonoBehaviour
         }
     }
 
-    private bool IsPositionOverUI(Vector2 _screenPos)
-    {
-        var eventData = new PointerEventData(EventSystem.current)
-        {
-            position = _screenPos
-        };
-        var raycastResults = new List<RaycastResult>();
-        EventSystem.current.RaycastAll(eventData, raycastResults);
-
-        return raycastResults.Count > 0;
-    }
 }

@@ -21,7 +21,8 @@ namespace Logging
         AR,
         Spawn,
         Input,
-        GamePhase
+        GamePhase,
+        Select
     }
 
     public interface ILogOutput

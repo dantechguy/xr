@@ -9,10 +9,10 @@ using UnityEngine.XR.ARSubsystems;
 public class SelectInputManager : MonoBehaviour
 {
     [SerializeField] private ARRaycastManager raycastManager;
+    [SerializeField] private SelectedTransformer selectedTransformer;
 
     private ARInputActions actions_;
     private InputAction tapAction_;
-
 
     private void OnEnable()
     {
@@ -34,38 +34,18 @@ public class SelectInputManager : MonoBehaviour
         var screenPos = actions_.TouchscreenGestures.TapStartPosition.ReadValue<Vector2>();
         XLogger.Log(Category.Input, $"Tap position: {screenPos}");
         
-        if (IsPositionOverUI(screenPos))
+        if (InputUtils.IsPositionOverUI(screenPos))
         {
             XLogger.Log(Category.Input, "Pointer over UI");
             return;
         }
 
-        Ray ray = Camera.main.ScreenPointToRay(screenPos);
-        RaycastHit hitObject;
-        if (Physics.Raycast(ray, out hitObject))
-        {
-            if (hitObject.collider.CompareTag("Spawned"))
-            {
-                XLogger.Log(Category.Input, "Hit spawned object");
-                return;
-            }
-        }
-
         var hits = new List<ARRaycastHit>();
         if (raycastManager.Raycast(screenPos, hits, TrackableType.PlaneWithinPolygon))
         {
+            // TODO: move object to new position
+            XLogger.Log(Category.Select, $"Move to new position");
+            selectedTransformer.MoveToHit(hits[0]);
         }
-    }
-
-    private bool IsPositionOverUI(Vector2 _screenPos)
-    {
-        var eventData = new PointerEventData(EventSystem.current)
-        {
-            position = _screenPos
-        };
-        var raycastResults = new List<RaycastResult>();
-        EventSystem.current.RaycastAll(eventData, raycastResults);
-        
-        return raycastResults.Count > 0; 
     }
 }
