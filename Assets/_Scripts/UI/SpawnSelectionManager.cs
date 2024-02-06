@@ -56,7 +56,7 @@ public class SpawnSelectionManager : MonoBehaviour
     private void HighlightSelected()
     {
         var index = spawnSettings.activePrefabIndex;
-        XLogger.Log(Category.UI, $"Highlighting prefab: {index}");
+        // XLogger.Log(Category.UI, $"Highlighting prefab: {index}");
         for (int i = 0; i < layoutGroup.transform.childCount; i++)
         {
             Transform selectItem = layoutGroup.transform.GetChild(i);

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2665565186655797796}
   - component: {fileID: -7911380270372556797}
+  - component: {fileID: 7751934172059033795}
   m_Layer: 0
   m_Name: Gate
   m_TagString: Spawned
@@ -48,6 +49,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   selectionIndicator: {fileID: 3520467654004956853}
   selectionInfo: {fileID: 11400000, guid: f906577a59fd5134c99e17a9da01077a, type: 2}
+--- !u!114 &7751934172059033795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3582997139378202303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f26580d65c1c43749b5dda1a71ef77c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7485285267622380567
 GameObject:
   m_ObjectHideFlags: 0

@@ -2,6 +2,9 @@
 using Logging;
 using UnityEngine;
 
+/// <summary>
+/// Every prefab that can be selected in the selection phase must have this component
+/// </summary>
 public class ARSpawnedSelectable : MonoBehaviour
 {
     [SerializeField] private GameObject selectionIndicator;

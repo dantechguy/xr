@@ -1,8 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(Slider))]
 public class GlobalScaleSlider : MonoBehaviour
 {
     [SerializeField] private SpawnSettings spawnSettings;
@@ -12,11 +11,11 @@ public class GlobalScaleSlider : MonoBehaviour
     private void Start()
     {
         slider_ = GetComponent<Slider>();
+        slider_.value = spawnSettings.globalScale;
     }
 
     public void SetScale()
     {
-        var value = slider_.value;
-        spawnSettings.globalScale = value;
+        spawnSettings.globalScale = slider_.value;
     }
 }

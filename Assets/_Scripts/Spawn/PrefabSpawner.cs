@@ -35,15 +35,17 @@ public class PrefabSpawner : AbstractHitConsumer
         // TODO: link with UI
         GameObject spawnPrefab = spawnSettings.GetActivePrefab();
         GameObject spawnedObject = Instantiate(spawnPrefab, hitPose.position, hitPose.rotation, transform);
-        spawnedObject.transform.localScale = spawnSettings.globalScale * Vector3.one;
+        
+        var transformable = spawnedObject.GetComponent<ARSpawnedTransformable>();
+        transformable.ApplyGlobalScale(spawnSettings.globalScale);
     }
 
     public void ApplyGlobalScale()
     {
         foreach (Transform child in transform)
         {
-            if (!child.CompareTag("Spawned")) continue;
-            child.localScale = spawnSettings.globalScale * Vector3.one;
+            var transformable = child.GetComponent<ARSpawnedTransformable>();
+            transformable.ApplyGlobalScale(spawnSettings.globalScale);
         }
     }
 }

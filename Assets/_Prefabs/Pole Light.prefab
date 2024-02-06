@@ -116,6 +116,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8222233461284442889}
   - component: {fileID: -8005660804660185179}
+  - component: {fileID: 247143707462707485}
   m_Layer: 0
   m_Name: Pole Light
   m_TagString: Spawned
@@ -155,6 +156,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   selectionIndicator: {fileID: 690782754599969225}
   selectionInfo: {fileID: 11400000, guid: f906577a59fd5134c99e17a9da01077a, type: 2}
+--- !u!114 &247143707462707485
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1770739194434583321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f26580d65c1c43749b5dda1a71ef77c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2288621738395278090
 GameObject:
   m_ObjectHideFlags: 0

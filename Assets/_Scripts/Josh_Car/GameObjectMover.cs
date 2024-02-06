@@ -15,7 +15,7 @@ public class GameObjectMover : AbstractHitConsumer
         MoveObject(_hit);
     }
 
-    public void MoveObject([CanBeNull] GameObject _gameObject, ARRaycastHit _hit)
+    public void MoveObject([CanBeNull] GameObject _gameObject, ARRaycastHit _hit, bool _setRotation = true)
     {
         if (_gameObject == null)
         {
@@ -23,10 +23,10 @@ public class GameObjectMover : AbstractHitConsumer
             return;
         }
         gameObjectToSpawn = _gameObject;
-        MoveObject(_hit);
+        MoveObject(_hit, _setRotation);
     }
     
-    public new void MoveObject(ARRaycastHit _hit)
+    public new void MoveObject(ARRaycastHit _hit, bool _setRotation = true)
     {
         XLogger.Log(Category.AR, $"Raycast hit type: {_hit.hitType}");
         if (_hit.trackable is not ARPlane plane)
@@ -45,6 +45,7 @@ public class GameObjectMover : AbstractHitConsumer
         XLogger.Log(Category.AR, $"Hit pose: {hitPose.position}");
 
         gameObjectToSpawn.transform.position = hitPose.position;
-        gameObjectToSpawn.transform.rotation = hitPose.rotation;
+        if (_setRotation)
+            gameObjectToSpawn.transform.rotation = hitPose.rotation;
     }
 }

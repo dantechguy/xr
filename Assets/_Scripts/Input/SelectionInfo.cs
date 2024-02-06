@@ -1,17 +1,24 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using Logging;
 using UnityEngine;
 
+/// <summary>
+/// Acts as the global state for selection 
+/// </summary>
 [CreateAssetMenu(menuName = "Create SelectionInfo", fileName = "SelectionInfo", order = 0)]
 public class SelectionInfo : ScriptableObject
 {
     private ARSpawnedSelectable selected_;
     private bool justSelected_;
+    
+    public event Action onSelected;
 
     public void SetSelected(ARSpawnedSelectable _selected)
     {
         selected_ = _selected;
         justSelected_ = true;
+        onSelected?.Invoke();
     }
     
     public bool IsJustSelected()

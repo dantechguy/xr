@@ -116,6 +116,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5104749915064510535}
   - component: {fileID: -1381457219681736829}
+  - component: {fileID: -7159443109582524279}
   m_Layer: 0
   m_Name: Finish Gate
   m_TagString: Spawned
@@ -157,6 +158,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   selectionIndicator: {fileID: 591559582875920623}
   selectionInfo: {fileID: 11400000, guid: f906577a59fd5134c99e17a9da01077a, type: 2}
+--- !u!114 &-7159443109582524279
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4572448659690236773}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f26580d65c1c43749b5dda1a71ef77c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5692849737266008274
 GameObject:
   m_ObjectHideFlags: 0
@@ -536,36 +549,6 @@ PrefabInstance:
     - target: {fileID: 6545220019582286330, guid: 1f26c4d3f7d55c14d962094153ef1b3a,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8059330706924365440, guid: 1f26c4d3f7d55c14d962094153ef1b3a,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.371151
-      objectReference: {fileID: 0}
-    - target: {fileID: 8059330706924365440, guid: 1f26c4d3f7d55c14d962094153ef1b3a,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.371151
-      objectReference: {fileID: 0}
-    - target: {fileID: 8059330706924365440, guid: 1f26c4d3f7d55c14d962094153ef1b3a,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.371151
-      objectReference: {fileID: 0}
-    - target: {fileID: 8059330706924365440, guid: 1f26c4d3f7d55c14d962094153ef1b3a,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8059330706924365440, guid: 1f26c4d3f7d55c14d962094153ef1b3a,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8059330706924365440, guid: 1f26c4d3f7d55c14d962094153ef1b3a,
-        type: 3}
-      propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
