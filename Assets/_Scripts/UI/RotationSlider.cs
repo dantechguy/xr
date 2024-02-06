@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Slider))]
@@ -12,10 +13,16 @@ public class RotationSlider : MonoBehaviour
         transformer_.GetSelectionInfo().onSelected += OnSelected;
     }
 
+    private void OnDisable()
+    {
+        transformer_.GetSelectionInfo().onSelected -= OnSelected;
+    }
+
     private void OnSelected()
     {
-        slider_.value = transformer_.GetSelectionInfo().GetSelected()?.GetComponent<ARSpawnedTransformable>()
-            ?.GetRotationAngle() ?? 0;
+        ARSpawnedSelectable selected = transformer_.GetSelectionInfo().GetSelected();
+        if (selected == null) return;
+        slider_.value = selected.GetComponent<ARSpawnedTransformable>().GetRotationAngle();
     }
 
     void Start()

@@ -104,7 +104,7 @@
                 {
                     "name": "",
                     "id": "05c1e38e-79dd-41cb-95d5-74f42e65d92f",
-                    "path": "<Touchscreen>/position",
+                    "path": "<Touchscreen>/primaryTouch/position",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -456,7 +456,18 @@
                 {
                     "name": "",
                     "id": "198e6869-709e-448d-96d4-27186c9d56e6",
-                    "path": "<Touchscreen>/Press",
+                    "path": "<Touchscreen>/touch*/Press",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c54e1b41-fbbe-4f15-b937-2347a306e13c",
+                    "path": "<Touchscreen>/primaryTouch/tap",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

@@ -15,6 +15,11 @@ public class LocalScaleSlider : MonoBehaviour
         transformer_.GetSelectionInfo().onSelected += OnSelected;
     }
 
+    private void OnDisable()
+    {
+        transformer_.GetSelectionInfo().onSelected -= OnSelected;
+    }
+
     private void OnSelected()
     {
         slider_.value = transformer_.GetSelectionInfo().GetSelected()?.GetComponent<ARSpawnedTransformable>()

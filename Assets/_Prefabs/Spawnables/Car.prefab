@@ -10607,6 +10607,7 @@ GameObject:
   - component: {fileID: 479450839817832306}
   - component: {fileID: 4226989850476432483}
   - component: {fileID: 2738353943956776066}
+  - component: {fileID: 5952873369163800508}
   m_Layer: 0
   m_Name: Collider
   m_TagString: Untagged
@@ -10654,11 +10655,32 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -3298800115395149385, guid: 8ef3dc744ab293d4ea87fd4c59a15afd, type: 3}
+--- !u!65 &5952873369163800508
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6208705004223100583}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.0067387, y: 1.1497321, z: 5.3510346}
+  m_Center: {x: -0.017977273, y: 0.79722506, z: -0.0062372535}
 --- !u!1 &6540262278102367403
 GameObject:
   m_ObjectHideFlags: 0
@@ -10991,7 +11013,8 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3286518444201352693, guid: 1f26c4d3f7d55c14d962094153ef1b3a, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
