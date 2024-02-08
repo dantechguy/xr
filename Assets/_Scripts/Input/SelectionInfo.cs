@@ -13,6 +13,7 @@ public class SelectionInfo : ScriptableObject
     private bool justSelected_;
     
     public event Action onSelected;
+    public event Action onDeselected;
 
     public void SetSelected(ARSpawnedSelectable _selected)
     {
@@ -34,6 +35,7 @@ public class SelectionInfo : ScriptableObject
         if (selected_ == null) return;
         selected_.OnDeselect();
         selected_ = null;
+        onDeselected?.Invoke();
     }
     
     [CanBeNull]

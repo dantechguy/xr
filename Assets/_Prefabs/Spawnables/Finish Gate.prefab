@@ -117,6 +117,7 @@ GameObject:
   - component: {fileID: 5104749915064510535}
   - component: {fileID: -1381457219681736829}
   - component: {fileID: -7159443109582524279}
+  - component: {fileID: 5751791476146501806}
   m_Layer: 0
   m_Name: Finish Gate
   m_TagString: Spawned
@@ -170,6 +171,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f26580d65c1c43749b5dda1a71ef77c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5751791476146501806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4572448659690236773}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc280183bf8240e45bf336216ae84e6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  position: 9999999
 --- !u!1 &5692849737266008274
 GameObject:
   m_ObjectHideFlags: 0
