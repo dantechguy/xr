@@ -79,7 +79,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 642287924342879162}
   serializedVersion: 4
-  m_Mass: 950
+  m_Mass: 3
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -138,11 +138,8 @@ MonoBehaviour:
   carEngineSound: {fileID: 0}
   tireScreechSound: {fileID: 0}
   useTouchControls: 1
-  throttleButton: {fileID: 0}
-  reverseButton: {fileID: 0}
-  turnRightButton: {fileID: 0}
-  turnLeftButton: {fileID: 0}
-  handbrakeButton: {fileID: 0}
+  touchAcceleratorObject: {fileID: 0}
+  touchSteeringWheelObject: {fileID: 0}
   carSpeed: 0
   isDrifting: 0
   isTractionLocked: 0

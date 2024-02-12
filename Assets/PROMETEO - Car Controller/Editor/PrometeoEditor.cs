@@ -4,9 +4,10 @@ using UnityEditor.AnimatedValues;
 
 [CustomEditor(typeof(PrometeoCarController))]
 [System.Serializable]
-public class PrometeoEditor : Editor{
+public class PrometeoEditor : Editor
+{
 
-  enum displayFieldType {DisplayAsAutomaticFields, DisplayAsCustomizableGUIFields}
+  enum displayFieldType { DisplayAsAutomaticFields, DisplayAsCustomizableGUIFields }
   displayFieldType DisplayFieldType;
 
   private PrometeoCarController prometeo;
@@ -69,13 +70,11 @@ public class PrometeoEditor : Editor{
   //
   //
   private SerializedProperty useTouchControls;
-  private SerializedProperty throttleButton;
-  private SerializedProperty reverseButton;
-  private SerializedProperty turnRightButton;
-  private SerializedProperty turnLeftButton;
-  private SerializedProperty handbrakeButton;
+  public SerializedProperty touchAcceleratorObject;
+  public SerializedProperty touchSteeringWheelObject;
 
-  private void OnEnable(){
+  private void OnEnable()
+  {
     prometeo = (PrometeoCarController)target;
     SO = new SerializedObject(target);
 
@@ -112,15 +111,13 @@ public class PrometeoEditor : Editor{
     tireScreechSound = SO.FindProperty("tireScreechSound");
 
     useTouchControls = SO.FindProperty("useTouchControls");
-    throttleButton = SO.FindProperty("throttleButton");
-    reverseButton = SO.FindProperty("reverseButton");
-    turnRightButton = SO.FindProperty("turnRightButton");
-    turnLeftButton = SO.FindProperty("turnLeftButton");
-    handbrakeButton = SO.FindProperty("handbrakeButton");
+    touchAcceleratorObject = SO.FindProperty("touchAcceleratorObject");
+    touchSteeringWheelObject = SO.FindProperty("touchSteeringWheelObject");
 
   }
 
-  public override void OnInspectorGUI(){
+  public override void OnInspectorGUI()
+  {
 
     SO.Update();
 
@@ -178,11 +175,11 @@ public class PrometeoEditor : Editor{
     useEffects.boolValue = EditorGUILayout.BeginToggleGroup("Use effects (particle systems)?", useEffects.boolValue);
     GUILayout.Space(10);
 
-        EditorGUILayout.PropertyField(RLWParticleSystem, new GUIContent("Rear Left Particle System: "));
-        EditorGUILayout.PropertyField(RRWParticleSystem, new GUIContent("Rear Right Particle System: "));
+    EditorGUILayout.PropertyField(RLWParticleSystem, new GUIContent("Rear Left Particle System: "));
+    EditorGUILayout.PropertyField(RRWParticleSystem, new GUIContent("Rear Right Particle System: "));
 
-        EditorGUILayout.PropertyField(RLWTireSkid, new GUIContent("Rear Left Trail Renderer: "));
-        EditorGUILayout.PropertyField(RRWTireSkid, new GUIContent("Rear Right Trail Renderer: "));
+    EditorGUILayout.PropertyField(RLWTireSkid, new GUIContent("Rear Left Trail Renderer: "));
+    EditorGUILayout.PropertyField(RRWTireSkid, new GUIContent("Rear Right Trail Renderer: "));
 
     EditorGUILayout.EndToggleGroup();
 
@@ -199,7 +196,7 @@ public class PrometeoEditor : Editor{
     useUI.boolValue = EditorGUILayout.BeginToggleGroup("Use UI (Speed text)?", useUI.boolValue);
     GUILayout.Space(10);
 
-        EditorGUILayout.PropertyField(carSpeedText, new GUIContent("Speed Text (UI): "));
+    EditorGUILayout.PropertyField(carSpeedText, new GUIContent("Speed Text (UI): "));
 
     EditorGUILayout.EndToggleGroup();
 
@@ -216,8 +213,8 @@ public class PrometeoEditor : Editor{
     useSounds.boolValue = EditorGUILayout.BeginToggleGroup("Use sounds (car sounds)?", useSounds.boolValue);
     GUILayout.Space(10);
 
-        EditorGUILayout.PropertyField(carEngineSound, new GUIContent("Car Engine Sound: "));
-        EditorGUILayout.PropertyField(tireScreechSound, new GUIContent("Tire Screech Sound: "));
+    EditorGUILayout.PropertyField(carEngineSound, new GUIContent("Car Engine Sound: "));
+    EditorGUILayout.PropertyField(tireScreechSound, new GUIContent("Tire Screech Sound: "));
 
     EditorGUILayout.EndToggleGroup();
 
@@ -234,11 +231,8 @@ public class PrometeoEditor : Editor{
     useTouchControls.boolValue = EditorGUILayout.BeginToggleGroup("Use touch controls (mobile devices)?", useTouchControls.boolValue);
     GUILayout.Space(10);
 
-        EditorGUILayout.PropertyField(throttleButton, new GUIContent("Throttle Button: "));
-        EditorGUILayout.PropertyField(reverseButton, new GUIContent("Brakes/Reverse Button: "));
-        EditorGUILayout.PropertyField(turnLeftButton, new GUIContent("Turn Left Button: "));
-        EditorGUILayout.PropertyField(turnRightButton, new GUIContent("Turn Right Button: "));
-        EditorGUILayout.PropertyField(handbrakeButton, new GUIContent("Handbrake Button: "));
+    EditorGUILayout.PropertyField(touchAcceleratorObject, new GUIContent("touchAcceleratorObject"));
+    EditorGUILayout.PropertyField(touchSteeringWheelObject, new GUIContent("touchSteeringWheelObject"));
 
     EditorGUILayout.EndToggleGroup();
 
