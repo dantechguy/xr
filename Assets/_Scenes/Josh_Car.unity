@@ -2219,6 +2219,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1609536116 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 290379109985716589, guid: bff2a48770dcd4606be806baf7769276,
+    type: 3}
+  m_PrefabInstance: {fileID: 2890980755063167532}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c39f5efbfc1d4c58b3303b5be0c44e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1884147245 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5843572238545823920, guid: bff2a48770dcd4606be806baf7769276,
@@ -2270,7 +2282,7 @@ PrefabInstance:
     - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
       propertyPath: touchAcceleratorObject
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1609536116}
     - target: {fileID: 627556911, guid: 79d0ca8b77e301442afdb49f102e8aed, type: 3}
       propertyPath: touchSteeringWheelObject
       value: 
@@ -2368,6 +2380,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6560512148893968672, guid: bff2a48770dcd4606be806baf7769276,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6560512148893968672, guid: bff2a48770dcd4606be806baf7769276,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 40
+      objectReference: {fileID: 0}
     - target: {fileID: 7547329172749356644, guid: bff2a48770dcd4606be806baf7769276,
         type: 3}
       propertyPath: m_Pivot.x
@@ -2467,6 +2489,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7592635647559542339, guid: bff2a48770dcd4606be806baf7769276,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7592635647559542339, guid: bff2a48770dcd4606be806baf7769276,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -190
       objectReference: {fileID: 0}
     - target: {fileID: 9003700302563529023, guid: bff2a48770dcd4606be806baf7769276,
         type: 3}
