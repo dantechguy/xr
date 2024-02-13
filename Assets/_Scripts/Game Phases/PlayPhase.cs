@@ -4,22 +4,35 @@ using UnityEngine;
 public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
 {
     [SerializeField] private GameObject playUICanvas;
+    
+    [Header("New Car Controls")] 
+    [SerializeField] private TouchAccelerator touchAcceleratorObject;
+    [SerializeField] private TouchSteeringWheel touchSteeringWheelObject;
 
-    [SerializeField] private GameObject throttleButton;
+    [Header("Old Car Controls")] [SerializeField]
+    private GameObject throttleButton;
+
     [SerializeField] private GameObject reverseButton;
     [SerializeField] private GameObject rightButton;
     [SerializeField] private GameObject leftButton;
     [SerializeField] private GameObject brakeButton;
 
 
-    private CustomCarController car_;
+    private PrometeoCarController car_;
+    private CustomCarController car_old_;
 
     public void Enable()
     {
         XLogger.Log(Category.GamePhase, "Play phase enabled");
         playUICanvas.SetActive(true);
 
-        var cars = FindObjectsOfType<CustomCarController>();
+        SetUpCarControls();
+        // SetUpCarControlsOld();
+    }
+
+    private void SetUpCarControls()
+    {
+        var cars = FindObjectsOfType<PrometeoCarController>();
         if (cars.Length == 0)
         {
             XLogger.LogWarning(Category.GamePhase, "No cars found");
@@ -31,7 +44,8 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
         for (var i = 1; i < cars.Length; i++)
             cars[i].enabled = false;
 
-        car_.SetUpTouchControls(throttleButton, reverseButton, rightButton, leftButton, brakeButton);
+        car_.touchAcceleratorObject = touchAcceleratorObject;
+        car_.touchSteeringWheelObject = touchSteeringWheelObject;
     }
 
     public void Disable()
@@ -40,5 +54,22 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
         playUICanvas.SetActive(false);
         if (car_ != null)
             car_.enabled = false;
+    }
+
+    private void SetUpCarControlsOld()
+    {
+        var cars = FindObjectsOfType<CustomCarController>();
+        if (cars.Length == 0)
+        {
+            XLogger.LogWarning(Category.GamePhase, "No cars found");
+            return;
+        }
+
+        car_old_ = cars[0];
+        car_old_.enabled = true;
+        for (var i = 1; i < cars.Length; i++)
+            cars[i].enabled = false;
+
+        car_old_.SetUpTouchControls(throttleButton, reverseButton, rightButton, leftButton, brakeButton);
     }
 }
