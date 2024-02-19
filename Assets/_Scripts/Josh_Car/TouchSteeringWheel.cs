@@ -28,7 +28,7 @@ public class TouchSteeringWheel : MonoBehaviour, IPointerDownHandler, IDragHandl
     public void OnPointerDown(PointerEventData eventData)
     {
         isDragging = true;
-        Vector2 direction = Input.mousePosition - wheel.position;
+        Vector2 direction = eventData.position - new Vector2(wheel.position.x, wheel.position.y);
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90;
         startAngle = angle - currentRotation;
     }
@@ -38,7 +38,7 @@ public class TouchSteeringWheel : MonoBehaviour, IPointerDownHandler, IDragHandl
         // Apply steering input if the user is dragging
         if (isDragging)
         {
-            Vector2 direction = Input.mousePosition - wheel.position;
+            Vector2 direction = eventData.position - new Vector2(wheel.position.x, wheel.position.y);
             float angle = Mathf.Clamp(-Mathf.Atan2(direction.x, direction.y) * Mathf.Rad2Deg - startAngle, -180f, 180f);
             // Apply rotation to your vehicle controller or steering wheel visualization
             // For example:
@@ -60,6 +60,6 @@ public class TouchSteeringWheel : MonoBehaviour, IPointerDownHandler, IDragHandl
 
     public float GetSteering()
     {
-        return currentRotation / 250f;
+        return -currentRotation / 250f;
     }
 }

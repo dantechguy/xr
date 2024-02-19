@@ -22,10 +22,13 @@ public class TouchAccelerator : MonoBehaviour, IDragHandler, IPointerDownHandler
 
     public void OnDrag(PointerEventData eventData)
     {
-        float yPosPct = eventData.position.y / (container.rect.height * canvas.scaleFactor);
-        yPosPct = Mathf.Clamp(yPosPct, -1, 1);
-        throttle = 2 * yPosPct - 1;
-        RotatePedals(throttle);
+        if (isDragging)
+        {
+            float yPosPct = eventData.position.y / (container.rect.height * canvas.scaleFactor);
+            yPosPct = Mathf.Clamp(yPosPct, -1, 1);
+            throttle = 2 * yPosPct - 1;
+            RotatePedals(throttle);
+        }
     }
 
     public void Update()
