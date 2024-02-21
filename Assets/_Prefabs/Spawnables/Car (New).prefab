@@ -242,6 +242,7 @@ MonoBehaviour:
   carEngineSound: {fileID: 0}
   tireScreechSound: {fileID: 0}
   useTouchControls: 1
+  useKeyboardControls: 1
   touchAcceleratorObject: {fileID: 0}
   touchSteeringWheelObject: {fileID: 0}
   carSpeed: 0

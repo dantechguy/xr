@@ -70,6 +70,7 @@ public class PrometeoEditor : Editor
   //
   //
   private SerializedProperty useTouchControls;
+  private SerializedProperty useKeyboardControls;
   public SerializedProperty touchAcceleratorObject;
   public SerializedProperty touchSteeringWheelObject;
 
@@ -111,6 +112,7 @@ public class PrometeoEditor : Editor
     tireScreechSound = SO.FindProperty("tireScreechSound");
 
     useTouchControls = SO.FindProperty("useTouchControls");
+    useKeyboardControls = SO.FindProperty("useKeyboardControls");
     touchAcceleratorObject = SO.FindProperty("touchAcceleratorObject");
     touchSteeringWheelObject = SO.FindProperty("touchSteeringWheelObject");
 
@@ -234,6 +236,10 @@ public class PrometeoEditor : Editor
     EditorGUILayout.PropertyField(touchAcceleratorObject, new GUIContent("touchAcceleratorObject"));
     EditorGUILayout.PropertyField(touchSteeringWheelObject, new GUIContent("touchSteeringWheelObject"));
 
+    EditorGUILayout.EndToggleGroup();
+    
+    useKeyboardControls.boolValue = EditorGUILayout.BeginToggleGroup("Use keyboard controls?", useKeyboardControls.boolValue);
+    GUILayout.Space(10);
     EditorGUILayout.EndToggleGroup();
 
     //END
