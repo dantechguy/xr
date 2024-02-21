@@ -2232,7 +2232,7 @@ GameObject:
   m_Component:
   - component: {fileID: 535539064}
   m_Layer: 0
-  m_Name: ----(Essentials)---------------------------------------------- (1)
+  m_Name: '@Essentials'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4266,7 +4266,7 @@ GameObject:
   m_Component:
   - component: {fileID: 877087098}
   m_Layer: 0
-  m_Name: ----(UI)----------------------------------------------
+  m_Name: '@UI'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5032,7 +5032,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1119060240}
   m_Layer: 0
-  m_Name: ----(Gameplay)---------------------------------------------- (1)
+  m_Name: '@Gameplay'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
