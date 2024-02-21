@@ -32,12 +32,18 @@ public class PrefabSpawner : AbstractHitConsumer
         Pose hitPose = _hit.pose;
         XLogger.Log(Category.Spawn, $"Hit pose: {hitPose.position}");
 
-        // TODO: link with UI
         GameObject spawnPrefab = spawnSettings.GetActivePrefab();
         GameObject spawnedObject = Instantiate(spawnPrefab, hitPose.position, hitPose.rotation, transform);
         
         var transformable = spawnedObject.GetComponent<ARSpawnedTransformable>();
         transformable.ApplyGlobalScale(spawnSettings.globalScale);
+
+        // immediately select the spawned object
+        if (spawnSettings.selectRightAfterSpawn && spawnedObject.TryGetComponent(out ARSpawnedSelectable selectable))
+        {
+            selectable.OnSelect();
+            GamePhaseManger.instance.SwitchPhase(GamePhaseManger.GamePhase.Select);
+        }
     }
 
     public void ApplyGlobalScale()

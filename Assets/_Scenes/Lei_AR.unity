@@ -5254,7 +5254,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   raycastManager: {fileID: 1435269405}
   spawner: {fileID: 1968981718}
-  selectionInfo: {fileID: 11400000, guid: f906577a59fd5134c99e17a9da01077a, type: 2}
 --- !u!114 &1182942797
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9266,6 +9265,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnSettings: {fileID: 11400000, guid: b9199c9febdb4c84e8e01ccdc9f24c62, type: 2}
+  selectionInfo: {fileID: 11400000, guid: f906577a59fd5134c99e17a9da01077a, type: 2}
 --- !u!114 &1968981719
 MonoBehaviour:
   m_ObjectHideFlags: 0

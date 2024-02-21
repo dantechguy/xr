@@ -10,6 +10,8 @@ public class ARSpawnedSelectable : MonoBehaviour
     [SerializeField] private GameObject selectionIndicator;
     [SerializeField] private SelectionInfo selectionInfo;
 
+    private bool selected_;
+
     private void Start()
     {
         if (selectionInfo == null)
@@ -18,17 +20,19 @@ public class ARSpawnedSelectable : MonoBehaviour
         if (selectionIndicator == null)
             XLogger.LogError(Category.Select, "Selection indicator not set");
 
-        selectionIndicator.SetActive(false);
+        selectionIndicator.SetActive(selected_);
     }
 
     public void OnSelect()
     {
+        selected_ = true;
         selectionIndicator.SetActive(true);
         selectionInfo.SetSelected(this);
     }
 
     public void OnDeselect()
     {
+        selected_ = false;
         selectionIndicator.SetActive(false);
     }
 }

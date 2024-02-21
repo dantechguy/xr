@@ -1,9 +1,10 @@
 ﻿using Logging;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class SelectPhase : MonoBehaviour, GamePhaseManger.IGamePhase
 {
-    [SerializeField] private SelectionInfo selectionInfo_;
+    [FormerlySerializedAs("selectionInfo_")] [SerializeField] private SelectionInfo selectionInfo;
     [SerializeField] private GameObject selectUICanvas;
     [SerializeField] private SelectInputManager selectInputManager;
     
@@ -19,6 +20,6 @@ public class SelectPhase : MonoBehaviour, GamePhaseManger.IGamePhase
         XLogger.Log(Category.GamePhase, "Select phase disabled");
         selectUICanvas.SetActive(false);
         selectInputManager.enabled = false;
-        selectionInfo_.ClearSelected();
+        selectionInfo.ClearSelected();
     }
 }

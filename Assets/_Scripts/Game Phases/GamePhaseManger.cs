@@ -3,10 +3,27 @@ using System.Collections.Generic;
 using Logging;
 using UnityEngine;
 
+// Singleton Class
+
 [RequireComponent(typeof(SpawnPhase), 
     typeof(SelectPhase), typeof(PlayPhase))]
 public class GamePhaseManger : MonoBehaviour
 {
+    public static GamePhaseManger instance { get; private set; }
+    
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            XLogger.LogWarning(Category.GamePhase, "Multiple GamePhaseManger instances found");
+            Destroy(this);
+        }
+    }
+    
     public enum GamePhase
     {
         Spawn = 0,

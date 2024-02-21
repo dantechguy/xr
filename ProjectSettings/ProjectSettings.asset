@@ -804,7 +804,8 @@ PlayerSettings:
   platformArchitecture: {}
   scriptingBackend:
     Android: 1
-  il2cppCompilerConfiguration: {}
+  il2cppCompilerConfiguration:
+    Android: 1
   il2cppCodeGeneration: {}
   managedStrippingLevel:
     Android: 1

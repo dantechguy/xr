@@ -11,18 +11,11 @@ public class SelectedTransformer : MonoBehaviour
 {
     [SerializeField] private SelectionInfo selectionInfo;
     
-    private GamePhaseManger phaseManger_;
-
     private GameObjectMover mover_;
 
     private void Start()
     {
         mover_ = GetComponent<GameObjectMover>();
-        phaseManger_ = FindObjectOfType<GamePhaseManger>();
-        if (phaseManger_ == null)
-        {
-            XLogger.LogWarning(Category.GamePhase, "Game phase manager not found");
-        }
     }
 
     public void MoveToHit(ARRaycastHit _hit)
@@ -35,7 +28,7 @@ public class SelectedTransformer : MonoBehaviour
     {
         Destroy(selectionInfo.GetSelected()?.gameObject);
         selectionInfo.ClearSelected();
-        phaseManger_.SwitchPhase(GamePhaseManger.GamePhase.Spawn);
+        GamePhaseManger.instance.SwitchPhase(GamePhaseManger.GamePhase.Spawn);
     }
 
     public void ApplyLocalScale(float _localScale)

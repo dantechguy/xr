@@ -8,8 +8,10 @@ public class SpawnSettings : ScriptableObject
     public float globalScale = 1.0f;
     public List<GameObject> prefabs;
     public int activePrefabIndex;
+    public bool selectRightAfterSpawn;
     [Header("Tracks")]
     public float trackScale;
+
 
     public GameObject GetActivePrefab()
     {

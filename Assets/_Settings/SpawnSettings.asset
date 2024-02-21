@@ -19,5 +19,6 @@ MonoBehaviour:
   - {fileID: 1770739194434583321, guid: bf817b2ff7bdae141beaaf2107654664, type: 3}
   - {fileID: 156674505722610927, guid: 95898e1d2d1d67044a7247b60dc06e18, type: 3}
   - {fileID: 5667964731993860312, guid: 090db9ca5618c4747a8c52e9325dc98d, type: 3}
-  activePrefabIndex: 3
-  trackScale: 0.5
+  activePrefabIndex: 2
+  selectRightAfterSpawn: 1
+  trackScale: 0.2438018

@@ -9,16 +9,9 @@ public class SpawnInputManager : MonoBehaviour
 {
     [SerializeField] private ARRaycastManager raycastManager;
     [SerializeField] private AbstractHitConsumer spawner;
-    [SerializeField] private SelectionInfo selectionInfo;
 
     private ARInputActions actions_;
     private InputAction tapAction_;
-    private GamePhaseManger phaseManger_;
-
-    private void Start()
-    {
-        phaseManger_ = FindObjectOfType<GamePhaseManger>();
-    }
 
     private void OnEnable()
     {
@@ -55,7 +48,7 @@ public class SpawnInputManager : MonoBehaviour
             {
                 XLogger.Log(Category.Input, "Hit selectable spawned object");
                 selectable.OnSelect();
-                phaseManger_.SwitchPhase(GamePhaseManger.GamePhase.Select);
+                GamePhaseManger.instance.SwitchPhase(GamePhaseManger.GamePhase.Select);
                 return;
             }
         }

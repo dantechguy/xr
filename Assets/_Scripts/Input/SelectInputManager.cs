@@ -43,7 +43,6 @@ public class SelectInputManager : MonoBehaviour
         var hits = new List<ARRaycastHit>();
         if (raycastManager.Raycast(screenPos, hits, TrackableType.PlaneWithinPolygon))
         {
-            // TODO: move object to new position
             XLogger.Log(Category.Select, $"Move to new position");
             selectedTransformer.MoveToHit(hits[0]);
         }
