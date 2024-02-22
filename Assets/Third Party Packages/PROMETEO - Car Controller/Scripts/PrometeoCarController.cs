@@ -31,11 +31,12 @@ public class PrometeoCarController : MonoBehaviour
     public int
         accelerationMultiplier = 2; // How fast the car can accelerate. 1 is a slow acceleration and 10 is the fastest.
 
-    [Space(10)] [Range(10, 45)]
+    [Space(10)]
+    [Range(10, 45)]
     public int maxSteeringAngle = 27; // The maximum angle that the tires can reach while rotating the steering wheel.
 
     [Range(0.1f, 1f)] public float steeringSpeed = 0.5f; // How fast the steering wheel turns.
-    [Space(10)] [Range(100, 600)] public int brakeForce = 350; // The strength of the wheel brakes.
+    [Space(10)][Range(100, 600)] public int brakeForce = 350; // The strength of the wheel brakes.
 
     [Range(1, 10)]
     public int decelerationMultiplier = 2; // How fast the car decelerates when the user is not using the throttle.
@@ -159,6 +160,12 @@ public class PrometeoCarController : MonoBehaviour
     float RRWextremumSlip;
 
     // Start is called before the first frame update
+
+    public void EnableControl(bool enable)
+    {
+        useTouchControls = enable;
+        useKeyboardControls = enable;
+    }
     void Start()
     {
         //In this part, we set the 'carRigidbody' value with the Rigidbody attached to this
@@ -328,6 +335,8 @@ public class PrometeoCarController : MonoBehaviour
             if ((!Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.W)))
             {
                 ThrottleOff();
+                Brakes();
+
             }
 
             if ((!Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.W)) && !Input.GetKey(KeyCode.Space) &&
@@ -690,6 +699,11 @@ public class PrometeoCarController : MonoBehaviour
         }
 
         // The following part sets the throttle power to 1 smoothly.
+        if (throttleAxis < 0f)
+        {
+            throttleAxis = 0f;
+        }
+
         throttleAxis = throttleAxis + (Time.deltaTime * 3f);
         if (throttleAxis > 1f)
         {
@@ -747,6 +761,10 @@ public class PrometeoCarController : MonoBehaviour
         }
 
         // The following part sets the throttle power to -1 smoothly.
+        if (throttleAxis > 0f)
+        {
+            throttleAxis = 0f;
+        }
         throttleAxis = throttleAxis - (Time.deltaTime * 3f);
         if (throttleAxis < -1f)
         {

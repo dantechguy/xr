@@ -5,12 +5,13 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
 {
     [SerializeField] private GameObject playUICanvas;
     [SerializeField] private GameManager gameManager;
-    
-    [Header("New Car Controls")] 
+
+    [Header("New Car Controls")]
     [SerializeField] private TouchAccelerator touchAcceleratorObject;
     [SerializeField] private TouchSteeringWheel touchSteeringWheelObject;
 
-    [Header("Old Car Controls")] [SerializeField]
+    [Header("Old Car Controls")]
+    [SerializeField]
     private GameObject throttleButton;
 
     [SerializeField] private GameObject reverseButton;
@@ -25,7 +26,7 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
     public void Enable()
     {
         XLogger.Log(Category.GamePhase, "Play phase enabled");
-        
+
         playUICanvas.SetActive(true);
         gameManager.enabled = true;
         gameManager.Enable();
@@ -44,9 +45,10 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
         }
 
         car_ = cars[0];
+        car_.EnableControl(true);
         car_.enabled = true;
         for (var i = 1; i < cars.Length; i++)
-            cars[i].enabled = false;
+            cars[i].EnableControl(false);
 
         car_.touchAcceleratorObject = touchAcceleratorObject;
         car_.touchSteeringWheelObject = touchSteeringWheelObject;
@@ -55,13 +57,13 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
     public void Disable()
     {
         XLogger.Log(Category.GamePhase, "Play phase disabled");
-        
+
         playUICanvas.SetActive(false);
         gameManager.Disable();
         gameManager.enabled = false;
-        
+
         if (car_ != null)
-            car_.enabled = false;
+            car_.EnableControl(false);
     }
 
     private void SetUpCarControlsOld()
