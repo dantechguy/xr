@@ -35,6 +35,7 @@ Transform:
   - {fileID: 8122782263088884169}
   - {fileID: 55563490448789997}
   - {fileID: 7183032565667549990}
+  - {fileID: 1503392532574347148}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &-7911380270372556797
@@ -76,6 +77,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   position: 0
+  targetMesh: {fileID: 8634567830864995231}
+  completedMaterial: {fileID: 2100000, guid: fa964e8ad176da44289ff665ae4b00c6, type: 2}
+  uncompletedMaterial: {fileID: 2100000, guid: b191529dbda163843876d34008f8139a, type: 2}
+  nextWaypointMaterial: {fileID: 2100000, guid: e30de09eaf386184ebb7bf7392069767,
+    type: 2}
 --- !u!1 &7485285267622380567
 GameObject:
   m_ObjectHideFlags: 0
@@ -182,6 +188,72 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 8799704334434963231, guid: ee05a77639c729f448c842f5462f0b4b, type: 3}
+--- !u!1 &9080944434310224078
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1503392532574347148}
+  - component: {fileID: 4465179430455444675}
+  - component: {fileID: 8111531834547229151}
+  m_Layer: 0
+  m_Name: Car Pass Detector
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1503392532574347148
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9080944434310224078}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2665565186655797796}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &4465179430455444675
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9080944434310224078}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.22128017, y: 0.103756614, z: 0.011577624}
+  m_Center: {x: 0, y: 0.052787576, z: 0}
+--- !u!114 &8111531834547229151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9080944434310224078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 916c68865d9f4c38bbf5b85270f92ca3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3056995820633821235
 PrefabInstance:
   m_ObjectHideFlags: 0

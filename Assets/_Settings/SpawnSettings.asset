@@ -24,4 +24,5 @@ MonoBehaviour:
   - {fileID: 5667964731993860312, guid: 090db9ca5618c4747a8c52e9325dc98d, type: 3}
   activePrefabIndex: 0
   selectRightAfterSpawn: 1
-  trackScale: 0.2438018
+  trackScale: 0.30214512
+  isClosed: 1

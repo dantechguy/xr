@@ -4,6 +4,7 @@ using UnityEngine;
 public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
 {
     [SerializeField] private GameObject playUICanvas;
+    [SerializeField] private GameManager gameManager;
     
     [Header("New Car Controls")] 
     [SerializeField] private TouchAccelerator touchAcceleratorObject;
@@ -24,7 +25,10 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
     public void Enable()
     {
         XLogger.Log(Category.GamePhase, "Play phase enabled");
+        
         playUICanvas.SetActive(true);
+        gameManager.enabled = true;
+        gameManager.Enable();
 
         SetUpCarControls();
         // SetUpCarControlsOld();
@@ -51,7 +55,11 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
     public void Disable()
     {
         XLogger.Log(Category.GamePhase, "Play phase disabled");
+        
         playUICanvas.SetActive(false);
+        gameManager.Disable();
+        gameManager.enabled = false;
+        
         if (car_ != null)
             car_.enabled = false;
     }

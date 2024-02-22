@@ -11,6 +11,7 @@ public class SpawnSettings : ScriptableObject
     public bool selectRightAfterSpawn;
     [Header("Tracks")]
     public float trackScale;
+    public bool isClosed;
 
 
     public GameObject GetActivePrefab()
