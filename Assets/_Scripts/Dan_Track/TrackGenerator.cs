@@ -42,16 +42,56 @@ public class TrackGenerator : MonoBehaviour
         {
             float width = trackWidth * trackScale;
             float thickness = trackScale / 10;
-            float smoothing = 0.3f * trackSmoothing * trackScale;
+            float smoothing = 1.5f * trackSmoothing * trackScale;
 
             List<Vector3> points = checkpoints.ConvertAll(c => c.position);
             BezierPath bezierPath = new BezierPath(points: points, isClosed: isClosed, space: PathSpace.xyz);
             bezierPath.AutoControlLength = smoothing;
+            bezierPath.ControlPointMode = BezierPath.ControlMode.Mirrored;
+            print(bezierPath.NumPoints);
+
+            //Set handles to be parallel to gate
+            for (int i = 0; i < checkpoints.Count; i++)
+            {
+                // The library uses a stupid way of editing control handels
+                int handle1Index, handle2Index;
+
+                if (i == 0)
+                {
+                    handle1Index = -1;
+                    handle2Index = 1;
+                }
+                else if (i == checkpoints.Count - 1)
+                {
+                    handle1Index = i * 3 - 1;
+                    handle2Index = -1;
+                }
+                else
+                {
+                    handle1Index = i * 3 - 1;
+                    handle2Index = i * 3 + 1;
+                }
+
+                if (handle1Index != -1)
+                {
+                    Vector3 handle1 = checkpoints[i].position + checkpoints[i].forward * smoothing;
+                    bezierPath.MovePoint(handle1Index, handle1);
+                }
+
+                if (handle2Index != -1)
+                {
+                    Vector3 handle2 = checkpoints[i].position - checkpoints[i].forward * smoothing;
+                    bezierPath.MovePoint(handle2Index, handle2);
+                }
+
+                bezierPath.SetAnchorNormalAngle(i, 0);
+            }
+
             VertexPath vertexPath = new VertexPath(bezierPath: bezierPath, transform: transform, maxAngleError: 0.3f, minVertexDst: 0f);
 
-            float textureTiling = (float) Math.Round(vertexPath.length / 5 / trackScale);
+            float textureTiling = (float)Math.Round(vertexPath.length / 5 / trackScale);
 
-            CreateTrackMeshInteral(vertexPath, thickness: thickness, flattenSurface: false, roadWidth: width);
+            CreateTrackMeshInteral(vertexPath, thickness: thickness, flattenSurface: true, roadWidth: width);
             AssignMaterials(textureTiling: textureTiling);
         }
         else
@@ -90,7 +130,9 @@ public class TrackGenerator : MonoBehaviour
         for (int i = 0; i < path.NumPoints; i++)
         {
             Vector3 localUp = (usePathNormals) ? Vector3.Cross(path.GetTangent(i), path.GetNormal(i)) : path.up;
-            Vector3 localRight = (usePathNormals) ? path.GetNormal(i) : Vector3.Cross(localUp, path.GetTangent(i));
+            Vector3 localRight = (usePathNormals) ? path.GetNormal(i) : Vector3.Cross(localUp, path.GetTangent(i)).normalized;
+
+
 
             // Find position to left and right of current path vertex
             Vector3 vertSideA = path.GetPoint(i) - localRight * Mathf.Abs(roadWidth);
