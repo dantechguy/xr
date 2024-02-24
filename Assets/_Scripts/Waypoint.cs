@@ -49,6 +49,11 @@ public class Waypoint : MonoBehaviour
 
     public void OnCarPassThrough()
     {
+        if (gameManager_ == null)
+        {
+            XLogger.LogWarning(Category.GameManager, "GameManager is null");
+            return;
+        }
         if (gameManager_.GetNextWaypointIndex() == orderInTrack_)
         {
             XLogger.Log(Category.GameManager, "Car passed through the correct waypoint");
