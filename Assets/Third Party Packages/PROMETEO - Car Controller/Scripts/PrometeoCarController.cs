@@ -11,6 +11,7 @@ something useful for your game. Best regards, Mena.
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Logging;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -294,7 +295,7 @@ public class PrometeoCarController : MonoBehaviour
         */
 
 #if UNITY_EDITOR
-        if (useKeyboardControls)
+        if (useKeyboardControls && !Input.GetMouseButton(1))
         {
             if (Input.GetKey(KeyCode.W))
             {
