@@ -20,7 +20,7 @@ public class SelectedTransformer : MonoBehaviour
 
     public void MoveToHit(ARRaycastHit _hit)
     {
-        if (selectionInfo.IsJustSelected()) return; // prevent the selection tap from moving the object
+        // if (selectionInfo.IsJustSelected()) return; // prevent the selection tap from moving the object
         mover_.MoveObject(selectionInfo.GetSelected()?.gameObject, _hit, false);
     }
 

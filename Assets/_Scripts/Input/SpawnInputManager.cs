@@ -12,6 +12,7 @@ public class SpawnInputManager : MonoBehaviour
 
     private ARInputActions actions_;
     private InputAction tapAction_;
+    private Camera cam_;
 
     private void OnEnable()
     {
@@ -20,6 +21,9 @@ public class SpawnInputManager : MonoBehaviour
         tapAction_ = actions_.TouchscreenGestures.Press;
         tapAction_.performed += OnTap;
         actions_.TouchscreenGestures.Enable();
+        
+        if (cam_ == null)
+            cam_ = Camera.main;
     }
 
     private void OnDisable()
@@ -39,7 +43,7 @@ public class SpawnInputManager : MonoBehaviour
             return;
         }
 
-        Ray ray = Camera.main.ScreenPointToRay(screenPos);
+        Ray ray = cam_.ScreenPointToRay(screenPos);
         RaycastHit hitObject;
         if (Physics.Raycast(ray, out hitObject))
         {

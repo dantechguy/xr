@@ -13,6 +13,7 @@ public class SelectInputManager : MonoBehaviour
 
     private ARInputActions actions_;
     private InputAction tapAction_;
+    private Camera cam_;
 
     private void OnEnable()
     {
@@ -21,6 +22,9 @@ public class SelectInputManager : MonoBehaviour
         tapAction_ = actions_.TouchscreenGestures.Press;
         tapAction_.performed += OnTap;
         actions_.TouchscreenGestures.Enable();
+        
+        if (cam_ == null)
+            cam_ = Camera.main;
     }
 
     private void OnDisable()
@@ -38,6 +42,20 @@ public class SelectInputManager : MonoBehaviour
         {
             XLogger.Log(Category.Input, "Pointer over UI");
             return;
+        }
+        
+        // select other selectables 
+        Ray ray = cam_.ScreenPointToRay(screenPos);
+        RaycastHit hitObject;
+        if (Physics.Raycast(ray, out hitObject))
+        {
+            var selectable = hitObject.collider.GetComponentInParent<ARSpawnedSelectable>();
+            if (selectable != null)
+            {
+                XLogger.Log(Category.Input, "Hit selectable spawned object");
+                selectable.OnSelect();
+                return;
+            }
         }
 
         var hits = new List<ARRaycastHit>();

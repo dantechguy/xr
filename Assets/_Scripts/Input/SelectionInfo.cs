@@ -17,6 +17,10 @@ public class SelectionInfo : ScriptableObject
 
     public void SetSelected(ARSpawnedSelectable _selected)
     {
+        // if the same object is selected, do nothing
+        if (selected_ == _selected) return;
+        
+        ClearSelected();
         selected_ = _selected;
         justSelected_ = true;
         onSelected?.Invoke();
