@@ -118,6 +118,7 @@ GameObject:
   - component: {fileID: 1742920065669888968}
   - component: {fileID: 4730090128500539273}
   - component: {fileID: 3450136735607578748}
+  - component: {fileID: 3286399170951479006}
   m_Layer: 0
   m_Name: Cone
   m_TagString: Untagged
@@ -196,6 +197,24 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &3286399170951479006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8959198062474703463}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 1, g: 0.83996594, b: 0.57075465, a: 1}
+  outlineWidth: 3
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1001 &2822837364743036160
 PrefabInstance:
   m_ObjectHideFlags: 0

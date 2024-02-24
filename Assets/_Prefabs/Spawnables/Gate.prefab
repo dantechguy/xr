@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: -7911380270372556797}
   - component: {fileID: 7751934172059033795}
   - component: {fileID: 1215931079799963088}
+  - component: {fileID: 5439754469650186647}
   m_Layer: 0
   m_Name: Gate
   m_TagString: Spawned
@@ -82,6 +83,24 @@ MonoBehaviour:
   uncompletedMaterial: {fileID: 2100000, guid: b191529dbda163843876d34008f8139a, type: 2}
   nextWaypointMaterial: {fileID: 2100000, guid: e30de09eaf386184ebb7bf7392069767,
     type: 2}
+--- !u!114 &5439754469650186647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3582997139378202303}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 1, g: 0.83996594, b: 0.57075465, a: 1}
+  outlineWidth: 3
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &7485285267622380567
 GameObject:
   m_ObjectHideFlags: 0

@@ -149,6 +149,7 @@ GameObject:
   - component: {fileID: 9131814766880154623}
   - component: {fileID: 1332774971052570873}
   - component: {fileID: 2815286715159760871}
+  - component: {fileID: 4895842601208109231}
   m_Layer: 0
   m_Name: Car (New)
   m_TagString: Player
@@ -275,6 +276,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f26580d65c1c43749b5dda1a71ef77c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &4895842601208109231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 156674505722610927}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 0
+  outlineColor: {r: 1, g: 0.83996594, b: 0.57075465, a: 1}
+  outlineWidth: 3
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &1697060074291591964
 GameObject:
   m_ObjectHideFlags: 0
