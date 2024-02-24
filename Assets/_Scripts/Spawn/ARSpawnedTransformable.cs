@@ -29,6 +29,6 @@ public class ARSpawnedTransformable : MonoBehaviour
 
     public float GetRotationAngle()
     {
-        return transform.rotation.eulerAngles.y;
+        return transform.rotation.eulerAngles.y % 360;
     }
 }
