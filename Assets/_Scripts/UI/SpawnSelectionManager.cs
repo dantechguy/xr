@@ -11,7 +11,7 @@ public class SpawnSelectionManager : MonoBehaviour
     [SerializeField] private HorizontalLayoutGroup layoutGroup;
     [SerializeField] private GameObject selectItemPrefab;
     [SerializeField] private SpawnSettings spawnSettings;
-    [SerializeField] private Color highlightedColor;
+    // [SerializeField] private Color highlightedColor;
 
     private void Start()
     {
@@ -53,17 +53,14 @@ public class SpawnSelectionManager : MonoBehaviour
         // populate layout group
         for (int i = 0; i < spawnSettings.prefabs.Count; i++)
         {
-            GameObject prefab = spawnSettings.prefabs[i];
             GameObject selectItem = Instantiate(selectItemPrefab, layoutGroup.transform);
             var button = selectItem.GetComponent<Button>();
-
             GameObject meshWrapper = selectItem.GetNamedChild("MeshWrapper");
+            
+            GameObject prefab = spawnSettings.prefabs[i];
             GameObject prefabObject = Instantiate(prefab, meshWrapper.transform);
-            // for (int j = 0; j < meshWrapper.transform.childCount; j++)
-            // {
-            //     Destroy(meshWrapper.transform.GetChild(j).gameObject);
-            // }
-            prefabObject.transform.parent = meshWrapper.transform;
+            prefabObject.SetLayerRecursively(LayerMask.NameToLayer("UI"));
+            // prefabObject.transform.parent = meshWrapper.transform;
 
             Rigidbody prefabRigidbody = prefabObject.GetComponent<Rigidbody>();
             if (prefabRigidbody != null)
