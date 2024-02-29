@@ -71,6 +71,12 @@ public class TouchAccelerator : MonoBehaviour
             throttle = Mathf.MoveTowards(throttle, 0f, 0.2f);
             RotatePedals(throttle);
         }
+
+        if (Input.touchCount == 0)
+        {
+            isDragging = false;
+            touchId = -1;
+        }
     }
 
     private void RotatePedals(float throttle)

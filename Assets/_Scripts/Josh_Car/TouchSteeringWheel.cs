@@ -75,6 +75,12 @@ public class TouchSteeringWheel : MonoBehaviour
             currentRotation = Mathf.MoveTowards(currentRotation, 0f, 10f);
             SetSteeringAngle(currentRotation);
         }
+
+        if (Input.touchCount == 0)
+        {
+            isDragging = false;
+            touchId = -1;
+        }
     }
 
     private void SetSteeringAngle(float angle)
