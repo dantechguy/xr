@@ -1,16 +1,22 @@
 using System;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using Logging;
 using TMPro;
 using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.UI;
+using Quaternion = UnityEngine.Quaternion;
+using Vector3 = UnityEngine.Vector3;
 
 public class SpawnSelectionManager : MonoBehaviour
 {
     [SerializeField] private HorizontalLayoutGroup layoutGroup;
-    [SerializeField] private GameObject selectItemPrefab;
     [SerializeField] private SpawnSettings spawnSettings;
+    [Header("Select Item")]
+    [SerializeField] private GameObject selectItemPrefab;
+    [SerializeField] private float baseSize;
+    [SerializeField] private float selectedSizeMultiplier;
     // [SerializeField] private Color highlightedColor;
 
     private void Start()
@@ -60,19 +66,15 @@ public class SpawnSelectionManager : MonoBehaviour
             GameObject prefab = spawnSettings.prefabs[i];
             GameObject prefabObject = Instantiate(prefab, meshWrapper.transform);
             prefabObject.SetLayerRecursively(LayerMask.NameToLayer("UI"));
-            // prefabObject.transform.parent = meshWrapper.transform;
 
-            Rigidbody prefabRigidbody = prefabObject.GetComponent<Rigidbody>();
-            if (prefabRigidbody != null)
+            if (prefabObject.TryGetComponent(out Rigidbody prefabRigidbody))
                 Destroy(prefabRigidbody);
-
-            Collider prefabCollider = prefabObject.GetComponent<Collider>();
-            if (prefabCollider != null)
+            if (prefabObject.TryGetComponent(out Collider prefabCollider))
                 Destroy(prefabCollider);
-
-            ARSpawnedSelectable selectable = prefabObject.GetComponent<ARSpawnedSelectable>();
-            if (selectable != null)
+            if (prefabObject.TryGetComponent(out ARSpawnedSelectable selectable))
                 Destroy(selectable);
+            if (prefabObject.TryGetComponent(out Light prefabLight))
+                Destroy(prefabLight);
 
 
             // // set material
@@ -115,11 +117,11 @@ public class SpawnSelectionManager : MonoBehaviour
         {
             Transform selectItem = layoutGroup.transform.GetChild(i);
 
-            var image = selectItem.GetComponent<Image>();
+            // var image = selectItem.GetComponent<Image>();
             // image.color = i == index ? highlightedColor : Color.clear;
 
-            selectItem.GetChild(0).localScale = i == index ? new Vector3(2f, 2f, 2f) : Vector3.one;
-            selectItem.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, i == index ? 800 : 400);
+            selectItem.GetChild(0).localScale = i == index ? Vector3.one * selectedSizeMultiplier : Vector3.one;
+            selectItem.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, i == index ? baseSize * selectedSizeMultiplier : baseSize);
         }
     }
 
