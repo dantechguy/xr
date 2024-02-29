@@ -7,7 +7,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Slider))]
 public class RotationSlider : MonoBehaviour
 {
-    [FormerlySerializedAs("transformer_")] [SerializeField] private SelectedTransformer transformer;
+    [FormerlySerializedAs("transformer_")][SerializeField] private SelectedTransformer transformer;
     private Slider slider_;
     private SelectionInfo selectionInfo_;
 
@@ -15,21 +15,21 @@ public class RotationSlider : MonoBehaviour
     {
         if (slider_ == null)
             slider_ = GetComponent<Slider>();
-        
+
         if (selectionInfo_ == null)
             selectionInfo_ = transformer.GetSelectionInfo();
-        
+
         selectionInfo_.onSelected += OnSelected;
-        
+
         OnSelected();
-        
+
         XLogger.Log(Category.UI, "RotationSlider enabled");
     }
 
     private void OnDisable()
     {
         selectionInfo_.onSelected -= OnSelected;
-        
+
         XLogger.Log(Category.UI, "RotationSlider disabled");
     }
 

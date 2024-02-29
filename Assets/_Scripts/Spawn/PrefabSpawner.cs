@@ -8,6 +8,7 @@ using UnityEngine.XR.ARSubsystems;
 public class PrefabSpawner : AbstractHitConsumer
 {
     [SerializeField] private SpawnSettings spawnSettings;
+    [SerializeField] private TrackManager trackManager;
 
     public override void OnHit(ARRaycastHit _hit)
     {
@@ -34,7 +35,7 @@ public class PrefabSpawner : AbstractHitConsumer
 
         GameObject spawnPrefab = spawnSettings.GetActivePrefab();
         GameObject spawnedObject = Instantiate(spawnPrefab, hitPose.position, hitPose.rotation, transform);
-        
+
         var transformable = spawnedObject.GetComponent<ARSpawnedTransformable>();
         transformable.ApplyGlobalScale(spawnSettings.globalScale);
 
@@ -44,6 +45,8 @@ public class PrefabSpawner : AbstractHitConsumer
             selectable.OnSelect();
             GamePhaseManger.instance.SwitchPhase(GamePhaseManger.GamePhase.Select);
         }
+
+        trackManager.GenerateTrack();
     }
 
     public void ApplyGlobalScale()

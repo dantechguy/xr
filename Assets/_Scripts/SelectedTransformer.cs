@@ -10,7 +10,8 @@ using UnityEngine.XR.ARFoundation;
 public class SelectedTransformer : MonoBehaviour
 {
     [SerializeField] private SelectionInfo selectionInfo;
-    
+    [SerializeField] private TrackManager trackManager;
+
     private GameObjectMover mover_;
 
     private void Start()
@@ -22,6 +23,7 @@ public class SelectedTransformer : MonoBehaviour
     {
         // if (selectionInfo.IsJustSelected()) return; // prevent the selection tap from moving the object
         mover_.MoveObject(selectionInfo.GetSelected()?.gameObject, _hit, false);
+        trackManager.GenerateTrack();
     }
 
     public void Delete()
@@ -29,6 +31,7 @@ public class SelectedTransformer : MonoBehaviour
         Destroy(selectionInfo.GetSelected()?.gameObject);
         selectionInfo.ClearSelected();
         GamePhaseManger.instance.SwitchPhase(GamePhaseManger.GamePhase.Spawn);
+        trackManager.GenerateTrack();
     }
 
     public void ApplyLocalScale(float _localScale)
@@ -44,5 +47,16 @@ public class SelectedTransformer : MonoBehaviour
     public void ApplyRotation(float _angle)
     {
         selectionInfo.GetSelected()?.GetComponent<ARSpawnedTransformable>()?.ApplyRotation(_angle);
+        trackManager.GenerateTrack();
+    }
+
+    public float GetRotation()
+    {
+        return selectionInfo.GetSelected()!.GetComponent<ARSpawnedTransformable>()!.GetRotationAngle();
+    }
+
+    public float GetScale()
+    {
+        return selectionInfo.GetSelected()!.GetComponent<ARSpawnedTransformable>()!.GetLocalScale();
     }
 }

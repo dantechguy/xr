@@ -1,6 +1,8 @@
 using System;
+using System.Runtime.InteropServices;
 using Logging;
 using TMPro;
+using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,6 +21,27 @@ public class SpawnSelectionManager : MonoBehaviour
         PopulateSelectItems();
     }
 
+    void Update()
+    {
+        float rotationSpeed = 50f;
+        for (int i = 0; i < layoutGroup.transform.childCount; i++)
+        {
+            GameObject selectItem = layoutGroup.transform.GetChild(i).gameObject;
+
+            // Sorry about the code below lol
+            if (i == spawnSettings.activePrefabIndex)
+            {
+                selectItem.GetNamedChild("MeshWrapper").transform.GetChild(0).Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
+            }
+            else
+            {
+                selectItem.GetNamedChild("MeshWrapper").transform.GetChild(0).localPosition = Vector3.zero;
+                selectItem.GetNamedChild("MeshWrapper").transform.GetChild(0).localRotation = Quaternion.identity;
+            }
+        }
+        HighlightSelected();
+    }
+
     private void PopulateSelectItems()
     {
         // clear layout group (note: backward loop to prevent deletion resulting in changes)
@@ -33,15 +56,49 @@ public class SpawnSelectionManager : MonoBehaviour
             GameObject prefab = spawnSettings.prefabs[i];
             GameObject selectItem = Instantiate(selectItemPrefab, layoutGroup.transform);
             var button = selectItem.GetComponent<Button>();
+
+            GameObject meshWrapper = selectItem.GetNamedChild("MeshWrapper");
+            GameObject prefabObject = Instantiate(prefab, meshWrapper.transform);
+            // for (int j = 0; j < meshWrapper.transform.childCount; j++)
+            // {
+            //     Destroy(meshWrapper.transform.GetChild(j).gameObject);
+            // }
+            prefabObject.transform.parent = meshWrapper.transform;
+
+            Rigidbody prefabRigidbody = prefabObject.GetComponent<Rigidbody>();
+            if (prefabRigidbody != null)
+                Destroy(prefabRigidbody);
+
+            Collider prefabCollider = prefabObject.GetComponent<Collider>();
+            if (prefabCollider != null)
+                Destroy(prefabCollider);
+
+            ARSpawnedSelectable selectable = prefabObject.GetComponent<ARSpawnedSelectable>();
+            if (selectable != null)
+                Destroy(selectable);
+
+
+            // // set material
+            // var meshRenderer = selectItem.GetComponentInChildren<MeshRenderer>();
+            // var materials = prefab.GetComponentInChildren<MeshRenderer>().sharedMaterials;
+            // for (int j = 0; j < materials.Length; j++)
+            // {
+            //     meshRenderer.AddMaterial(materials[j]);
+            // }
+
+            // // set mesh
+
+
+            // scale the mesh to fit the button
+            Bounds bounds = GetBounds(prefabObject);
+            Vector3 maxBounds = new Vector3(0.08f, 0.08f, 0.08f);
+            float scaleFactor = Mathf.Min(maxBounds.x / bounds.size.x, maxBounds.y / bounds.size.y, maxBounds.z / bounds.size.z);
+            prefabObject.transform.localScale *= scaleFactor;
+
+            selectItem.GetComponentInChildren<TextMeshProUGUI>().text = prefab.name;
+
             var iCopy = i; // closure, otherwise i is passed as a reference
             button.onClick.AddListener(() => OnSelectItem(prefab, iCopy));
-            // TODO: use image/icon as well
-            selectItem.GetComponentInChildren<TextMeshProUGUI>().text = prefab.name;
-            if (i == spawnSettings.activePrefabIndex)
-            {
-                var image = selectItem.GetComponent<Image>();
-                image.color = highlightedColor;
-            }
         }
     }
 
@@ -60,13 +117,26 @@ public class SpawnSelectionManager : MonoBehaviour
         for (int i = 0; i < layoutGroup.transform.childCount; i++)
         {
             Transform selectItem = layoutGroup.transform.GetChild(i);
-            var button = selectItem.GetComponent<Button>();
-            ColorBlock colors = button.colors;
-            colors.normalColor = i == index ? highlightedColor : Color.white;
-            colors.selectedColor = i == index ? highlightedColor : Color.white;
-            button.colors = colors;
+
             var image = selectItem.GetComponent<Image>();
-            image.color = i == index ? highlightedColor : Color.white;
+            // image.color = i == index ? highlightedColor : Color.clear;
+
+            selectItem.GetChild(0).localScale = i == index ? new Vector3(2f, 2f, 2f) : Vector3.one;
+            selectItem.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, i == index ? 800 : 400);
         }
+    }
+
+    Bounds GetBounds(GameObject obj)
+    {
+        var prefabMeshes = obj.GetComponentsInChildren<MeshFilter>();
+        CombineInstance[] combineInstances = new CombineInstance[prefabMeshes.Length];
+        for (int j = 0; j < prefabMeshes.Length; j++)
+        {
+            combineInstances[j].mesh = prefabMeshes[j].sharedMesh;
+            combineInstances[j].transform = prefabMeshes[j].transform.localToWorldMatrix;
+        }
+        Mesh combinedMesh = new Mesh();
+        combinedMesh.CombineMeshes(combineInstances, true, true);
+        return combinedMesh.bounds;
     }
 }
