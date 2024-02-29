@@ -68,8 +68,14 @@ public class TouchAccelerator : MonoBehaviour
         // Apply spring force when not dragging
         if (!isDragging)
         {
-            throttle = Mathf.MoveTowards(throttle, 0f, 0.02f);
+            throttle = Mathf.MoveTowards(throttle, 0f, 0.2f);
             RotatePedals(throttle);
+        }
+
+        if (Input.touchCount == 0)
+        {
+            isDragging = false;
+            touchId = -1;
         }
     }
 

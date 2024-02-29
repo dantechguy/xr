@@ -72,8 +72,14 @@ public class TouchSteeringWheel : MonoBehaviour
         // Apply spring force when not dragging
         if (!isDragging)
         {
-            currentRotation = Mathf.MoveTowards(currentRotation, 0f, 1f);
+            currentRotation = Mathf.MoveTowards(currentRotation, 0f, 10f);
             SetSteeringAngle(currentRotation);
+        }
+
+        if (Input.touchCount == 0)
+        {
+            isDragging = false;
+            touchId = -1;
         }
     }
 
