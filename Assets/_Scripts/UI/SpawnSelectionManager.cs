@@ -3,6 +3,7 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using Logging;
 using TMPro;
+using Unity.Mathematics;
 using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,10 +14,16 @@ public class SpawnSelectionManager : MonoBehaviour
 {
     [SerializeField] private HorizontalLayoutGroup layoutGroup;
     [SerializeField] private SpawnSettings spawnSettings;
-    [Header("Select Item")]
-    [SerializeField] private GameObject selectItemPrefab;
+
+    [Header("Select Item")] [SerializeField]
+    private GameObject selectItemPrefab;
+
     [SerializeField] private float baseSize;
     [SerializeField] private float selectedSizeMultiplier;
+    [SerializeField] private float rotationSpeed = 50f;
+    [SerializeField] private float deselectRotationSpeed = 50f;
+
+    [SerializeField] private float itemMeshSize;
     // [SerializeField] private Color highlightedColor;
 
     private void Start()
@@ -29,22 +36,25 @@ public class SpawnSelectionManager : MonoBehaviour
 
     void Update()
     {
-        float rotationSpeed = 50f;
         for (int i = 0; i < layoutGroup.transform.childCount; i++)
         {
             GameObject selectItem = layoutGroup.transform.GetChild(i).gameObject;
 
             // Sorry about the code below lol
+            Transform meshTransform = selectItem.GetNamedChild("MeshWrapper").transform.GetChild(0);
             if (i == spawnSettings.activePrefabIndex)
             {
-                selectItem.GetNamedChild("MeshWrapper").transform.GetChild(0).Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
+                meshTransform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
             }
             else
             {
-                selectItem.GetNamedChild("MeshWrapper").transform.GetChild(0).localPosition = Vector3.zero;
-                selectItem.GetNamedChild("MeshWrapper").transform.GetChild(0).localRotation = Quaternion.identity;
+                meshTransform.localPosition = Vector3.zero;
+                // selectItem.GetNamedChild("MeshWrapper").transform.GetChild(0).localRotation = Quaternion.identity;
+                meshTransform.localRotation =
+                    Quaternion.RotateTowards(meshTransform.localRotation, quaternion.identity, deselectRotationSpeed);
             }
         }
+
         HighlightSelected();
     }
 
@@ -62,7 +72,7 @@ public class SpawnSelectionManager : MonoBehaviour
             GameObject selectItem = Instantiate(selectItemPrefab, layoutGroup.transform);
             var button = selectItem.GetComponent<Button>();
             GameObject meshWrapper = selectItem.GetNamedChild("MeshWrapper");
-            
+
             GameObject prefab = spawnSettings.prefabs[i];
             GameObject prefabObject = Instantiate(prefab, meshWrapper.transform);
             prefabObject.SetLayerRecursively(LayerMask.NameToLayer("UI"));
@@ -73,9 +83,9 @@ public class SpawnSelectionManager : MonoBehaviour
                 Destroy(prefabCollider);
             if (prefabObject.TryGetComponent(out ARSpawnedSelectable selectable))
                 Destroy(selectable);
-            if (prefabObject.TryGetComponent(out Light prefabLight))
-                Destroy(prefabLight);
-
+            var prefabLight = prefabObject.GetComponentInChildren<Light>();
+            if (prefabLight != null)
+                Destroy(prefabLight.gameObject);
 
             // // set material
             // var meshRenderer = selectItem.GetComponentInChildren<MeshRenderer>();
@@ -90,8 +100,9 @@ public class SpawnSelectionManager : MonoBehaviour
 
             // scale the mesh to fit the button
             Bounds bounds = GetBounds(prefabObject);
-            Vector3 maxBounds = new Vector3(0.08f, 0.08f, 0.08f);
-            float scaleFactor = Mathf.Min(maxBounds.x / bounds.size.x, maxBounds.y / bounds.size.y, maxBounds.z / bounds.size.z);
+            Vector3 maxBounds = new Vector3(0.08f, 0.08f, 0.08f) * itemMeshSize;
+            float scaleFactor = Mathf.Min(maxBounds.x / bounds.size.x, maxBounds.y / bounds.size.y,
+                maxBounds.z / bounds.size.z);
             prefabObject.transform.localScale *= scaleFactor;
 
             selectItem.GetComponentInChildren<TextMeshProUGUI>().text = prefab.name;
@@ -121,7 +132,8 @@ public class SpawnSelectionManager : MonoBehaviour
             // image.color = i == index ? highlightedColor : Color.clear;
 
             selectItem.GetChild(0).localScale = i == index ? Vector3.one * selectedSizeMultiplier : Vector3.one;
-            selectItem.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, i == index ? baseSize * selectedSizeMultiplier : baseSize);
+            selectItem.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal,
+                i == index ? baseSize * selectedSizeMultiplier : baseSize);
         }
     }
 
@@ -134,6 +146,7 @@ public class SpawnSelectionManager : MonoBehaviour
             combineInstances[j].mesh = prefabMeshes[j].sharedMesh;
             combineInstances[j].transform = prefabMeshes[j].transform.localToWorldMatrix;
         }
+
         Mesh combinedMesh = new Mesh();
         combinedMesh.CombineMeshes(combineInstances, true, true);
         return combinedMesh.bounds;
