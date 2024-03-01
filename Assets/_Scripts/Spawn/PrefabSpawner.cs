@@ -9,6 +9,7 @@ public class PrefabSpawner : AbstractHitConsumer
 {
     [SerializeField] private SpawnSettings spawnSettings;
     [SerializeField] private TrackManager trackManager;
+    [SerializeField] private ARAnchorManager anchorManager;
 
     public override void OnHit(ARRaycastHit _hit)
     {
@@ -34,10 +35,15 @@ public class PrefabSpawner : AbstractHitConsumer
         XLogger.Log(Category.Spawn, $"Hit pose: {hitPose.position}");
 
         GameObject spawnPrefab = spawnSettings.GetActivePrefab();
-        GameObject spawnedObject = Instantiate(spawnPrefab, hitPose.position, hitPose.rotation, transform);
+        GameObject spawnedObject = Instantiate(spawnPrefab, hitPose.position, hitPose.rotation);
 
+        // apply global scale
         var transformable = spawnedObject.GetComponent<ARSpawnedTransformable>();
         transformable.ApplyGlobalScale(spawnSettings.globalScale);
+
+        // attache AR anchor
+        ARAnchor anchor = anchorManager.AttachAnchor(plane, _hit.pose);
+        spawnedObject.transform.SetParent(anchor.transform);
 
         // immediately select the spawned object
         if (spawnSettings.selectRightAfterSpawn && spawnedObject.TryGetComponent(out ARSpawnedSelectable selectable))
@@ -51,9 +57,9 @@ public class PrefabSpawner : AbstractHitConsumer
 
     public void ApplyGlobalScale()
     {
-        foreach (Transform child in transform)
+        foreach (ARAnchor child in anchorManager.trackables)
         {
-            var transformable = child.GetComponent<ARSpawnedTransformable>();
+            var transformable = child.GetComponentInChildren<ARSpawnedTransformable>();
             transformable.ApplyGlobalScale(spawnSettings.globalScale);
         }
     }

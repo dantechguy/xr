@@ -34,7 +34,7 @@ public class SelectedTransformer : MonoBehaviour
             // has to add this line because destroy take place at the end of the frame
             if (selected.TryGetComponent(out Waypoint waypoint))
                 waypoint.enabled = false;
-            Destroy(selected.gameObject);
+            Destroy(selected.GetComponentInParent<ARAnchor>().gameObject);
         }
         selectionInfo.ClearSelected();
         GamePhaseManger.instance.SwitchPhase(GamePhaseManger.GamePhase.Spawn);

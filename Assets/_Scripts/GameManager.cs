@@ -36,6 +36,10 @@ public class GameManager : MonoBehaviour
         foreach (var waypoint in wayPoints_)
             waypoint.Init(this);
 
+    }
+
+    public void StartTimer()
+    {
         timer.StartTimer();
     }
 

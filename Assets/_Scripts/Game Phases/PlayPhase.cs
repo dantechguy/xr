@@ -38,6 +38,8 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
     {
         XLogger.Log(Category.GamePhase, "Play phase enabled");
         playUICanvas.SetActive(true);
+        gameManager.enabled = true;
+        gameManager.Enable();
 
         Transform parent = countDownText.transform.parent;
         if (generalSettings.countDown)
@@ -51,11 +53,10 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
             yield return new WaitForSeconds(1);
         }
         parent.gameObject.SetActive(false);
-
-        gameManager.enabled = true;
-        gameManager.Enable();
-
+        
         SetUpCarControls();
+        
+        gameManager.StartTimer();
     }
 
     private void SetUpCarControls()
