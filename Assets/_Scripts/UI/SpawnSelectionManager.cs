@@ -41,7 +41,11 @@ public class SpawnSelectionManager : MonoBehaviour
             GameObject selectItem = layoutGroup.transform.GetChild(i).gameObject;
 
             // Sorry about the code below lol
-            Transform meshTransform = selectItem.GetNamedChild("MeshWrapper").transform.GetChild(0);
+            Transform meshWrapperTransform = selectItem.GetNamedChild("MeshWrapper").transform;
+            if (meshWrapperTransform.childCount <= 0)
+                continue;
+
+            Transform meshTransform = meshWrapperTransform.GetChild(0);
             if (i == spawnSettings.activePrefabIndex)
             {
                 meshTransform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
