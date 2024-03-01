@@ -87,6 +87,8 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
 
         if (car_ != null)
             car_.EnableControl(false);
+        
+        StopAllCoroutines();
     }
 
     private void SetUpCarControlsOld()
