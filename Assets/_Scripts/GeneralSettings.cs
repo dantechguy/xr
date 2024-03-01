@@ -6,6 +6,7 @@ public class GeneralSettings : ScriptableObject
 {
     public float planeTransparency;
     public bool countDown;
+    public int laps;
 
     public void ApplyTransparencyToPlane(ARPlane _plane)
     {

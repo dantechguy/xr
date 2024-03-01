@@ -36,4 +36,9 @@ public class Timer : MonoBehaviour
         var centiseconds = (int)(time_ * 100) % 100;
         return $"{minutes:0}:{seconds:00}:{centiseconds:00}";
     }
+
+    public void StopTimer()
+    {
+        isRunning_ = false;
+    }
 }

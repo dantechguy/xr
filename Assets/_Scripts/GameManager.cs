@@ -1,18 +1,32 @@
+using System;
 using System.Collections.Generic;
 using Logging;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private TrackManager trackManager_;
+    [SerializeField] private GeneralSettings generalSettings;
+
+    [FormerlySerializedAs("trackManager_")] [SerializeField]
+    private TrackManager trackManager;
+
     [SerializeField] private Timer timer;
 
     private List<Waypoint> wayPoints_ = new List<Waypoint>();
     private int nextWaypoint_;
+    private int totalLaps_;
+    private int completedLaps_;
+
+    public static Action<int, int> onLapCompleted;
 
     public void Enable()
     {
-        wayPoints_ = trackManager_.GetWayPoints();
+        totalLaps_ = generalSettings.laps;
+        completedLaps_ = 0;
+        onLapCompleted?.Invoke(completedLaps_, totalLaps_);
+
+        wayPoints_ = trackManager.GetWayPoints();
 
         if (wayPoints_.Count == 0)
             XLogger.LogWarning(Category.GameManager, "No waypoints found");
@@ -21,7 +35,7 @@ public class GameManager : MonoBehaviour
 
         foreach (var waypoint in wayPoints_)
             waypoint.Init(this);
-        
+
         timer.StartTimer();
     }
 
@@ -29,7 +43,7 @@ public class GameManager : MonoBehaviour
     {
         foreach (var waypoint in wayPoints_)
             waypoint.SetToNotCompleted();
-        
+
         timer.ResetTimer();
     }
 
@@ -37,9 +51,7 @@ public class GameManager : MonoBehaviour
     {
         if (_index > wayPoints_.Count - 1)
         {
-            XLogger.Log(Category.GameManager, "Lap Finished");
-            // for now, just restart the lap
-            SetNextWayPoint(0);
+            LapFinished();
             return;
         }
 
@@ -51,6 +63,22 @@ public class GameManager : MonoBehaviour
 
         for (int i = nextWaypoint_ + 1; i < wayPoints_.Count; i++)
             wayPoints_[i].SetToNotCompleted();
+    }
+
+    private void LapFinished()
+    {
+        XLogger.Log(Category.GameManager, "Lap Finished");
+        completedLaps_++;
+        if (completedLaps_ <= totalLaps_)
+            onLapCompleted?.Invoke(completedLaps_, totalLaps_);
+        if (completedLaps_ >= totalLaps_)
+        {
+            XLogger.Log(Category.GameManager, "Race Finished");
+            timer.StopTimer();
+            return;
+        }
+
+        SetNextWayPoint(0);
     }
 
     public int GetNextWaypointIndex()
