@@ -5,7 +5,8 @@ using UnityEngine.XR.ARFoundation;
 public class GeneralSettings : ScriptableObject
 {
     public float planeTransparency;
-    
+    public bool countDown;
+
     public void ApplyTransparencyToPlane(ARPlane _plane)
     {
         var meshRenderer = _plane.GetComponent<MeshRenderer>();

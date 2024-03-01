@@ -10,12 +10,12 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
     [SerializeField] private GeneralSettings generalSettings;
     [SerializeField] private TextMeshProUGUI countDownText;
 
-    [Header("New Car Controls")]
-    [SerializeField] private TouchAccelerator touchAcceleratorObject;
+    [Header("New Car Controls")] [SerializeField]
+    private TouchAccelerator touchAcceleratorObject;
+
     [SerializeField] private TouchSteeringWheel touchSteeringWheelObject;
 
-    [Header("Old Car Controls")]
-    [SerializeField]
+    [Header("Old Car Controls")] [SerializeField]
     private GameObject throttleButton;
 
     [SerializeField] private GameObject reverseButton;
@@ -30,7 +30,7 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
     public void Enable()
     {
         StartCoroutine(CoEnable());
-        
+
         // SetUpCarControlsOld();
     }
 
@@ -40,13 +40,16 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
         playUICanvas.SetActive(true);
 
         Transform parent = countDownText.transform.parent;
-        parent.gameObject.SetActive(true);
-        countDownText.text = "3";
-        yield return new WaitForSeconds(1);
-        countDownText.text = "2";
-        yield return new WaitForSeconds(1);
-        countDownText.text = "1";
-        yield return new WaitForSeconds(1);
+        if (generalSettings.countDown)
+        {
+            parent.gameObject.SetActive(true);
+            countDownText.text = "3";
+            yield return new WaitForSeconds(1);
+            countDownText.text = "2";
+            yield return new WaitForSeconds(1);
+            countDownText.text = "1";
+            yield return new WaitForSeconds(1);
+        }
         parent.gameObject.SetActive(false);
 
         gameManager.enabled = true;
