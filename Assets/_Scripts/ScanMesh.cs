@@ -17,7 +17,6 @@ public class ScanMesh : MonoBehaviour
 {
     [SerializeField] private ARMeshManager arMeshManager;
     [SerializeField] private Camera mainCamera;
-    [SerializeField] private Camera textureCamera;
     [SerializeField] private RawImage rawImage;
     [SerializeField] private ARCameraManager cameraManager;
     [SerializeField] private Transform cameraOffset;
@@ -162,12 +161,12 @@ public class ScanMesh : MonoBehaviour
                 computeShader.SetBuffer(kernelIndex, "normals", normalsBuffer);
                 computeShader.SetBuffer(kernelIndex, "uvs", uvsBuffer);
                 computeShader.SetMatrix("worldToScreenMatrix", worldToScreenMatrix);
-                computeShader.SetVector("cameraForward", mainCamera.transform.forward);
+                computeShader.SetVector("cameraForward", -mainCamera.transform.forward);
                 computeShader.SetInt("TOTAL_TEXTURES", totalTextures);
                 computeShader.SetInt("TEXTURE_INDEX", textureIndex);
 
                 // Dispatch compute shader
-                computeShader.Dispatch(kernelIndex, meshFilter.mesh.vertices.Length / 64, 1, 1);
+                computeShader.Dispatch(kernelIndex, meshFilter.mesh.vertices.Length / 64 / 3, 1, 1);
 
                 uvsBuffer.GetData(uvs);
 

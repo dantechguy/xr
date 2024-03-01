@@ -21,31 +21,47 @@ int TOTAL_TEXTURES;
 [numthreads(64, 1, 1)]
 void CSMain(uint3 id : SV_DispatchThreadID) {
     // Read vertex data from texture
-    VertexData vertexData;
-    vertexData.vertex = vertices[id.x];
-    vertexData.normal = normals[id.x];
-    vertexData.uv = uvs[id.x];
+    VertexData vertexData[3];
+    for (int i = 0; i<3; i++) {
+        vertexData[i].vertex = vertices[3*id.x + i];
+        vertexData[i].normal = normals[3*id.x + i];
+        vertexData[i].uv = uvs[3*id.x + i];
+    }
 
-    // Vertex has already been processed
-    if (vertexData.uv.x != -1.0 && vertexData.uv.y != -1.0) return;
+    bool vectorProcessed = 
+        vertexData[0].uv.x != -1.0 && vertexData[0].uv.y != -1.0 && 
+        vertexData[1].uv.x != -1.0 && vertexData[1].uv.y != -1.0 && 
+        vertexData[2].uv.x != -1.0 && vertexData[2].uv.y != -1.0;
+    float vectorToCameraAngle = acos(dot(vertexData[0].normal, cameraForward));
 
-    // Vertex is not facing the camera
-    if (dot(vertexData.normal, cameraForward) > cos(radians(90 + 20))) return;
+    // Ignore if vector has already been processed, unless it's facing the camera very well
+    if (vectorProcessed && vectorToCameraAngle > radians(45)) return;
+
+    // Ignore if vertex is not facing the camera
+    if (vectorToCameraAngle > radians(70)) return;
 
     // Transform vertex to screen space
-    float4 screenPoint = mul(worldToScreenMatrix, float4(vertexData.vertex, 1.0));
-    screenPoint /= screenPoint.w;
+    float2 tempUvs[3];
+    
+    for (int j = 0; j<3; j++) {
+        float4 screenPoint = mul(worldToScreenMatrix, float4(vertexData[j].vertex, 1.0));
+        screenPoint /= screenPoint.w;
 
-    // Calculate UVs
-    float u = (screenPoint.x + 1) / 2;
-    float v = (screenPoint.y + 1) / 2;
+        // Calculate UVs
+        float u = (screenPoint.x + 1) / 2;
+        float v = (screenPoint.y + 1) / 2;
 
-    // Vertex is outside the screen
-    if (screenPoint.z < 0 || u < 0.1 || u > 0.9 || v < 0.1 || v > 0.9) return;
+        // Vertex is outside the screen
+        if (screenPoint.z < 0 || u < 0.1 || u > 0.9 || v < 0.1 || v > 0.9) return;
 
-    // Adjust for texture tiling
-    u = (u / TOTAL_TEXTURES) + ((float)TEXTURE_INDEX / TOTAL_TEXTURES);
+        // Adjust for texture tiling
+        u = (u / TOTAL_TEXTURES) + ((float)TEXTURE_INDEX / TOTAL_TEXTURES);
+
+        tempUvs[j] = float2(u, v);
+    }
 
     // Write UVs to texture
-    uvs[id.x] = float2(u, v);
+    for (int k = 0; k<3; k++) {
+        uvs[3*id.x + k] = tempUvs[k];
+    }
 }
