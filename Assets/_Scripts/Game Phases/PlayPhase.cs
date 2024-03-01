@@ -1,10 +1,14 @@
-﻿using Logging;
+﻿using System.Collections;
+using Logging;
+using TMPro;
 using UnityEngine;
 
 public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
 {
     [SerializeField] private GameObject playUICanvas;
     [SerializeField] private GameManager gameManager;
+    [SerializeField] private GeneralSettings generalSettings;
+    [SerializeField] private TextMeshProUGUI countDownText;
 
     [Header("New Car Controls")]
     [SerializeField] private TouchAccelerator touchAcceleratorObject;
@@ -25,14 +29,30 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
 
     public void Enable()
     {
-        XLogger.Log(Category.GamePhase, "Play phase enabled");
+        StartCoroutine(CoEnable());
+        
+        // SetUpCarControlsOld();
+    }
 
+    private IEnumerator CoEnable()
+    {
+        XLogger.Log(Category.GamePhase, "Play phase enabled");
         playUICanvas.SetActive(true);
+
+        Transform parent = countDownText.transform.parent;
+        parent.gameObject.SetActive(true);
+        countDownText.text = "3";
+        yield return new WaitForSeconds(1);
+        countDownText.text = "2";
+        yield return new WaitForSeconds(1);
+        countDownText.text = "1";
+        yield return new WaitForSeconds(1);
+        parent.gameObject.SetActive(false);
+
         gameManager.enabled = true;
         gameManager.Enable();
 
         SetUpCarControls();
-        // SetUpCarControlsOld();
     }
 
     private void SetUpCarControls()

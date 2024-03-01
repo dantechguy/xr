@@ -5,14 +5,15 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private TrackManager trackManager_;
-    
+    [SerializeField] private Timer timer;
+
     private List<Waypoint> wayPoints_ = new List<Waypoint>();
     private int nextWaypoint_;
 
     public void Enable()
     {
         wayPoints_ = trackManager_.GetWayPoints();
-        
+
         if (wayPoints_.Count == 0)
             XLogger.LogWarning(Category.GameManager, "No waypoints found");
         else
@@ -20,12 +21,16 @@ public class GameManager : MonoBehaviour
 
         foreach (var waypoint in wayPoints_)
             waypoint.Init(this);
+        
+        timer.StartTimer();
     }
 
     public void Disable()
     {
         foreach (var waypoint in wayPoints_)
             waypoint.SetToNotCompleted();
+        
+        timer.ResetTimer();
     }
 
     public void SetNextWayPoint(int _index)
@@ -37,16 +42,15 @@ public class GameManager : MonoBehaviour
             SetNextWayPoint(0);
             return;
         }
-        
+
         nextWaypoint_ = _index;
         for (int i = 0; i < _index; i++)
             wayPoints_[i].SetToCompleted();
 
         wayPoints_[nextWaypoint_].SetToNextWaypoint();
-        
-        for (int i = nextWaypoint_+1; i < wayPoints_.Count; i++)
-            wayPoints_[i].SetToNotCompleted();
 
+        for (int i = nextWaypoint_ + 1; i < wayPoints_.Count; i++)
+            wayPoints_[i].SetToNotCompleted();
     }
 
     public int GetNextWaypointIndex()
