@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization.Formatters.Binary;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Mathematics;
@@ -20,6 +22,8 @@ public class ScanMesh : MonoBehaviour
     [SerializeField] private RawImage rawImage;
     [SerializeField] private ARCameraManager cameraManager;
     [SerializeField] private Transform cameraOffset;
+    [SerializeField] private GameObject carBase;
+    [SerializeField] private float itemMeshSize;
     public ComputeShader computeShader;
 
     private int textureIndex = 0; // index of uv channel we are currently using
@@ -200,4 +204,117 @@ public class ScanMesh : MonoBehaviour
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
     }
+
+    Mesh CombineMeshes(IList<MeshFilter> meshes)
+    {
+        CombineInstance[] combineInstances = new CombineInstance[meshes.Count];
+        for (int j = 0; j < meshes.Count; j++)
+        {
+            combineInstances[j].mesh = meshes[j].sharedMesh;
+            combineInstances[j].transform = meshes[j].transform.localToWorldMatrix;
+        }
+
+        Mesh combinedMesh = new Mesh();
+        combinedMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+        combinedMesh.CombineMeshes(combineInstances, true, true);
+
+        return combinedMesh;
+    }
+
+    Bounds GetBounds(GameObject obj)
+    {
+        var prefabMeshes = obj.GetComponentsInChildren<MeshFilter>();
+        CombineInstance[] combineInstances = new CombineInstance[prefabMeshes.Length];
+        for (int j = 0; j < prefabMeshes.Length; j++)
+        {
+            combineInstances[j].mesh = prefabMeshes[j].sharedMesh;
+            combineInstances[j].transform = prefabMeshes[j].transform.localToWorldMatrix;
+        }
+
+        Mesh combinedMesh = new Mesh();
+        combinedMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+        combinedMesh.CombineMeshes(combineInstances, true, true);
+        return combinedMesh.bounds;
+    }
+
+    public void CreateCar()
+    {
+        // GameObject car = Instantiate(carBase);
+
+        // GameObject body = car.GetNamedChild("Body");
+        // body.GetComponent<MeshFilter>().mesh = CombineMeshes(arMeshManager.meshes);
+        // var bounds = GetBounds(body);
+
+        // var colliderBounds = GetBounds(car.GetNamedChild("Collider"));
+        // float scaleFactor = Mathf.Min(colliderBounds.size.x / bounds.size.x, colliderBounds.size.y / bounds.size.y,
+        //     colliderBounds.size.z / bounds.size.z);
+        // body.transform.localScale *= scaleFactor;
+
+        // body.transform.position = new Vector3(0, -GetBounds(body).min.y, 0);
+
+        // var meshRenderer = body.GetComponent<MeshRenderer>();
+        // meshRenderer.material = arMeshManager.meshes[0].GetComponent<MeshRenderer>().material;
+
+        // Save to file
+        Mesh combinedMeshes = CombineMeshes(arMeshManager.meshes);
+        MeshAndTexture meshAndTexture = new MeshAndTexture();
+        meshAndTexture.vertices = combinedMeshes.vertices;
+        meshAndTexture.triangles = combinedMeshes.triangles;
+        meshAndTexture.normals = combinedMeshes.normals;
+        meshAndTexture.uv = combinedMeshes.uv;
+        meshAndTexture.texture = atlasTexture;
+
+        string json = JsonUtility.ToJson(meshAndTexture);
+        File.WriteAllText("testobj.json", json);
+    }
+
+    public void OpenCarFile()
+    {
+        if (File.Exists("testobj.json"))
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            string jsonData = File.ReadAllText("testobj.json");
+            MeshAndTexture meshAndTexture = JsonUtility.FromJson<MeshAndTexture>(jsonData);
+
+            Mesh mesh = new Mesh();
+            mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+            mesh.vertices = meshAndTexture.vertices;
+            mesh.triangles = meshAndTexture.triangles;
+            mesh.normals = meshAndTexture.normals;
+            mesh.uv = meshAndTexture.uv;
+
+            Texture2D texture = meshAndTexture.texture;
+            Material materialWithTexture = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+            materialWithTexture.mainTexture = texture;
+
+
+            GameObject car = Instantiate(carBase);
+
+            GameObject body = car.GetNamedChild("Body");
+            body.GetComponent<MeshFilter>().mesh = mesh;
+            var bounds = GetBounds(body);
+
+            var colliderBounds = GetBounds(car.GetNamedChild("Collider"));
+            float scaleFactor = Mathf.Min(colliderBounds.size.x / bounds.size.x, colliderBounds.size.y / bounds.size.y,
+                colliderBounds.size.z / bounds.size.z);
+            body.transform.localScale *= scaleFactor;
+
+            body.transform.position = new Vector3(0, -GetBounds(body).min.y, 0);
+
+            var meshRenderer = body.GetComponent<MeshRenderer>();
+            meshRenderer.material = materialWithTexture;
+        }
+    }
+}
+
+
+
+[Serializable]
+public class MeshAndTexture
+{
+    public Vector3[] vertices;
+    public int[] triangles;
+    public Vector3[] normals;
+    public Vector2[] uv;
+    public Texture2D texture;
 }
