@@ -1,0 +1,51 @@
+#pragma kernel CSMain
+
+// Struct to hold vertex data
+struct VertexData {
+    float3 vertex;
+    float3 normal;
+    float2 uv;
+};
+
+float4x4 worldToScreenMatrix;
+float3 cameraForward;
+
+// Buffers
+StructuredBuffer<float3> vertices;
+StructuredBuffer<float3> normals;
+RWStructuredBuffer<float2> uvs;
+
+int TEXTURE_INDEX;
+int TOTAL_TEXTURES;
+
+[numthreads(64, 1, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID) {
+    // Read vertex data from texture
+    VertexData vertexData;
+    vertexData.vertex = vertices[id.x];
+    vertexData.normal = normals[id.x];
+    vertexData.uv = uvs[id.x];
+
+    // Vertex has already been processed
+    if (vertexData.uv.x != -1.0 && vertexData.uv.y != -1.0) return;
+
+    // Vertex is not facing the camera
+    if (dot(vertexData.normal, cameraForward) > cos(radians(90 + 20))) return;
+
+    // Transform vertex to screen space
+    float4 screenPoint = mul(worldToScreenMatrix, float4(vertexData.vertex, 1.0));
+    screenPoint /= screenPoint.w;
+
+    // Calculate UVs
+    float u = (screenPoint.x + 1) / 2;
+    float v = (screenPoint.y + 1) / 2;
+
+    // Vertex is outside the screen
+    if (screenPoint.z < 0 || u < 0.1 || u > 0.9 || v < 0.1 || v > 0.9) return;
+
+    // Adjust for texture tiling
+    u = (u / TOTAL_TEXTURES) + ((float)TEXTURE_INDEX / TOTAL_TEXTURES);
+
+    // Write UVs to texture
+    uvs[id.x] = float2(u, v);
+}

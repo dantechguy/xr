@@ -1962,6 +1962,7 @@ MonoBehaviour:
   rawImage: {fileID: 2091159419}
   cameraManager: {fileID: 1198279061}
   cameraOffset: {fileID: 250389991}
+  computeShader: {fileID: 7200000, guid: 23010dcbb051c4469b65876d4fea0a7a, type: 3}
 --- !u!4 &1121388638
 Transform:
   m_ObjectHideFlags: 0
