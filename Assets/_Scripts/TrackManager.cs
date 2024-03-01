@@ -21,12 +21,15 @@ public class TrackManager : MonoBehaviour
         wayPoints_.Clear();
         foreach (Transform child in transform)
         {
-            if (child.TryGetComponent(out Waypoint waypoint))
+            if (child.TryGetComponent(out Waypoint waypoint) && waypoint.enabled)
                 wayPoints_.Add(waypoint);
         }
 
         if (wayPoints_.Count < 2)
+        {
+            trackGenerator.ClearTrack();
             return;
+        }
 
         wayPoints_.Sort((_a, _b) => _a.position.CompareTo(_b.position));
         for (int i = 0; i < wayPoints_.Count; i++)
