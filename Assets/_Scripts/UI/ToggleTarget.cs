@@ -22,13 +22,15 @@ public class ToggleTarget : MonoBehaviour
             XLogger.LogWarning("Target not set for ToggleTarget");
         }
         target.SetActive(defaultActive);
-        text_.text = defaultActive ? activeText : inactiveText;
+        if (text_ != null)
+            text_.text = defaultActive ? activeText : inactiveText;
     }
 
     public void ToggleActive()
     {
         target.SetActive(!target.activeSelf);
-        text_.text = target.activeSelf ? activeText : inactiveText;
+        if (text_ != null)
+            text_.text = target.activeSelf ? activeText : inactiveText;
     }
     
     

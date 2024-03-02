@@ -13,6 +13,7 @@ public class SpawnInputManager : MonoBehaviour
     private ARInputActions actions_;
     private InputAction tapAction_;
     private Camera cam_;
+    private bool selectPlane_;
 
     private void OnEnable()
     {
@@ -60,8 +61,25 @@ public class SpawnInputManager : MonoBehaviour
         var hits = new List<ARRaycastHit>();
         if (raycastManager.Raycast(screenPos, hits, TrackableType.PlaneWithinPolygon))
         {
-            spawner.OnHit(hits[0]);
+            if (selectPlane_)
+            {
+                if (hits[0].trackable.TryGetComponent(out ARPlaneSelectable planeSelectable))
+                {
+                    XLogger.Log(Category.Input, "Hit selectable plane"); 
+                    planeSelectable.OnSelect();
+                    GamePhaseManger.instance.SwitchPhase(GamePhaseManger.GamePhase.PlaneSelect);
+                }
+            }
+            else
+            {
+                spawner.OnHit(hits[0]);
+            }
         }
+    }
+
+    public void ToggleSelectPlane()
+    {
+        selectPlane_ = !selectPlane_;
     }
 
 }
