@@ -43,7 +43,6 @@ public class ObjectReplay : MonoBehaviour
                 replayIndex++;
             }
 
-            UnityEngine.Debug.Log("ReplayIndex: " + replayIndex + " / " + replayTransforms[replayIndex].Item2);
                 
 
             replayTransforms[replayIndex].Item2.ApplyToTransform(replayObject.transform);
@@ -57,7 +56,6 @@ public class ObjectReplay : MonoBehaviour
 
     public void StartTracking()
     {
-        UnityEngine.Debug.Log("StartTracking");
         isTracking = true;
         trackingStopwatch.Restart();
         trackingTransforms = new List<Tuple<TimeSpan, SavedTransform>>();
@@ -65,14 +63,12 @@ public class ObjectReplay : MonoBehaviour
 
     public void StopTracking()
     {
-        UnityEngine.Debug.Log("StopTracking");
         isTracking = false;
         trackingStopwatch.Stop();
     }
 
     public void SaveTracking()
     {
-        UnityEngine.Debug.Log("SaveTracking");
         replayTransforms = new List<Tuple<TimeSpan, SavedTransform>>(trackingTransforms);
     }
 
@@ -87,7 +83,6 @@ public class ObjectReplay : MonoBehaviour
 
     public void StartReplaying()
     {
-        UnityEngine.Debug.Log("StartReplaying");
         if (replayTransforms.Count == 0) return;
 
         StopReplaying();
@@ -100,7 +95,6 @@ public class ObjectReplay : MonoBehaviour
 
     public void StopReplaying()
     {
-        UnityEngine.Debug.Log("StopReplaying");
         isReplaying = false;
         replayStopwatch.Stop();
         Destroy(replayObject);
@@ -109,7 +103,6 @@ public class ObjectReplay : MonoBehaviour
     public void ClearReplay()
     {
         StopReplaying();
-        UnityEngine.Debug.Log("ClearReplay");
         replayTransforms = new List<Tuple<TimeSpan, SavedTransform>>();
     }
 
