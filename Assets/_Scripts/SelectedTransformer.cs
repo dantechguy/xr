@@ -28,7 +28,14 @@ public class SelectedTransformer : MonoBehaviour
 
     public void Delete()
     {
-        Destroy(selectionInfo.GetSelected()?.gameObject);
+        ARSpawnedSelectable selected = selectionInfo.GetSelected();
+        if (selected != null)
+        {
+            // has to add this line because destroy take place at the end of the frame
+            if (selected.TryGetComponent(out Waypoint waypoint))
+                waypoint.enabled = false;
+            Destroy(selected.GetComponentInParent<ARAnchor>().gameObject);
+        }
         selectionInfo.ClearSelected();
         GamePhaseManger.instance.SwitchPhase(GamePhaseManger.GamePhase.Spawn);
         trackManager.GenerateTrack();

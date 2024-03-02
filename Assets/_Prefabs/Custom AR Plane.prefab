@@ -27,8 +27,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1879102968285703825}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.28, y: 0.72, z: 1.37}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.12, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -226,6 +226,7 @@ GameObject:
   - component: {fileID: 4954085290020760404}
   - component: {fileID: 9140221237711969237}
   - component: {fileID: 3267421092263992984}
+  - component: {fileID: 1641156192167381722}
   m_Layer: 0
   m_Name: Custom AR Plane
   m_TagString: Untagged
@@ -454,3 +455,18 @@ LineRenderer:
   m_UseWorldSpace: 0
   m_Loop: 1
   m_ApplyActiveColorSpace: 1
+--- !u!114 &1641156192167381722
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9197243050453170082}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13821a561b654a5797859cab28aea6ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selectionInfo: {fileID: 11400000, guid: c4ee292f5659ffb40bb3f8588b74e839, type: 2}
+  selectedMaterial: {fileID: 2926557707537190794, guid: f396e3429a4864fc2ad497cb3ce5fe2c,
+    type: 3}

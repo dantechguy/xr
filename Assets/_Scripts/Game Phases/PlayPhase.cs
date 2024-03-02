@@ -1,17 +1,21 @@
-﻿using Logging;
+﻿using System.Collections;
+using Logging;
+using TMPro;
 using UnityEngine;
 
 public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
 {
     [SerializeField] private GameObject playUICanvas;
     [SerializeField] private GameManager gameManager;
+    [SerializeField] private GeneralSettings generalSettings;
+    [SerializeField] private TextMeshProUGUI countDownText;
 
-    [Header("New Car Controls")]
-    [SerializeField] private TouchAccelerator touchAcceleratorObject;
+    [Header("New Car Controls")] [SerializeField]
+    private TouchAccelerator touchAcceleratorObject;
+
     [SerializeField] private TouchSteeringWheel touchSteeringWheelObject;
 
-    [Header("Old Car Controls")]
-    [SerializeField]
+    [Header("Old Car Controls")] [SerializeField]
     private GameObject throttleButton;
 
     [SerializeField] private GameObject reverseButton;
@@ -25,14 +29,34 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
 
     public void Enable()
     {
-        XLogger.Log(Category.GamePhase, "Play phase enabled");
+        StartCoroutine(CoEnable());
 
+        // SetUpCarControlsOld();
+    }
+
+    private IEnumerator CoEnable()
+    {
+        XLogger.Log(Category.GamePhase, "Play phase enabled");
         playUICanvas.SetActive(true);
         gameManager.enabled = true;
         gameManager.Enable();
 
+        Transform parent = countDownText.transform.parent;
+        if (generalSettings.countDown)
+        {
+            parent.gameObject.SetActive(true);
+            countDownText.text = "3";
+            yield return new WaitForSeconds(1);
+            countDownText.text = "2";
+            yield return new WaitForSeconds(1);
+            countDownText.text = "1";
+            yield return new WaitForSeconds(1);
+        }
+        parent.gameObject.SetActive(false);
+        
         SetUpCarControls();
-        // SetUpCarControlsOld();
+        
+        gameManager.StartTimer();
     }
 
     private void SetUpCarControls()
@@ -64,6 +88,8 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
 
         if (car_ != null)
             car_.EnableControl(false);
+        
+        StopAllCoroutines();
     }
 
     private void SetUpCarControlsOld()

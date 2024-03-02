@@ -13,3 +13,5 @@ MonoBehaviour:
   m_Name: GeneralSettings
   m_EditorClassIdentifier: 
   planeTransparency: 0.5
+  countDown: 0
+  laps: 2

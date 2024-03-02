@@ -2,11 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR.ARFoundation;
 
 public class TrackManager : MonoBehaviour
 {
     [SerializeField] private TrackGenerator trackGenerator;
     [SerializeField] private SpawnSettings spawnSettings;
+    [SerializeField] private ARAnchorManager anchorManager;
     private List<Waypoint> wayPoints_ = new List<Waypoint>();
 
     public List<Waypoint> GetWayPoints()
@@ -19,14 +21,18 @@ public class TrackManager : MonoBehaviour
     public void GenerateTrack()
     {
         wayPoints_.Clear();
-        foreach (Transform child in transform)
+        foreach (ARAnchor child in anchorManager.trackables)
         {
-            if (child.TryGetComponent(out Waypoint waypoint))
+            var waypoint = child.GetComponentInChildren<Waypoint>();
+            if (waypoint != null && waypoint.enabled)
                 wayPoints_.Add(waypoint);
         }
 
         if (wayPoints_.Count < 2)
+        {
+            trackGenerator.ClearTrack();
             return;
+        }
 
         wayPoints_.Sort((_a, _b) => _a.position.CompareTo(_b.position));
         for (int i = 0; i < wayPoints_.Count; i++)

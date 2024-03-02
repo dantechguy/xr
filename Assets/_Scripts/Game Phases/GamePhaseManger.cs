@@ -28,7 +28,8 @@ public class GamePhaseManger : MonoBehaviour
     {
         Spawn = 0,
         Select = 1,
-        Play = 2
+        Play = 2,
+        PlaneSelect = 3
     }
 
     public interface IGamePhase
@@ -46,7 +47,8 @@ public class GamePhaseManger : MonoBehaviour
         {
             GetComponent<SpawnPhase>(),
             GetComponent<SelectPhase>(),
-            GetComponent<PlayPhase>()
+            GetComponent<PlayPhase>(),
+            GetComponent<PlaneSelectPhase>()
         };
         
         foreach (IGamePhase phase in gamePhases_)

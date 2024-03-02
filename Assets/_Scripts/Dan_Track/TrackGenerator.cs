@@ -62,6 +62,7 @@ public class TrackGenerator : MonoBehaviour
             mesh.Clear();
         }
 
+        meshCollider.enabled = true;
         meshFilter.sharedMesh = mesh;
         meshCollider.sharedMesh = mesh;
     }
@@ -209,5 +210,13 @@ public class TrackGenerator : MonoBehaviour
             meshRenderer.sharedMaterials = new Material[] { roadMaterial, undersideMaterial, undersideMaterial };
             meshRenderer.sharedMaterials[0].mainTextureScale = new Vector3(1, textureTiling);
         }
+    }
+
+    public void ClearTrack()
+    {
+        meshCollider.enabled = false;
+        mesh.Clear();
+        meshFilter.sharedMesh = mesh;
+        meshCollider.sharedMesh = mesh;
     }
 }
