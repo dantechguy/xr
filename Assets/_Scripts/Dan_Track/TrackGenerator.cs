@@ -48,44 +48,7 @@ public class TrackGenerator : MonoBehaviour
             BezierPath bezierPath = new BezierPath(points: points, isClosed: isClosed, space: PathSpace.xyz);
             bezierPath.AutoControlLength = smoothing;
             bezierPath.ControlPointMode = BezierPath.ControlMode.Mirrored;
-            print(bezierPath.NumPoints);
-
-            //Set handles to be parallel to gate
-            for (int i = 0; i < checkpoints.Count; i++)
-            {
-                // The library uses a stupid way of editing control handels
-                int handle1Index, handle2Index;
-
-                if (i == 0)
-                {
-                    handle1Index = -1;
-                    handle2Index = 1;
-                }
-                else if (i == checkpoints.Count - 1)
-                {
-                    handle1Index = i * 3 - 1;
-                    handle2Index = -1;
-                }
-                else
-                {
-                    handle1Index = i * 3 - 1;
-                    handle2Index = i * 3 + 1;
-                }
-
-                if (handle1Index != -1)
-                {
-                    Vector3 handle1 = checkpoints[i].position + checkpoints[i].forward * smoothing;
-                    bezierPath.MovePoint(handle1Index, handle1);
-                }
-
-                if (handle2Index != -1)
-                {
-                    Vector3 handle2 = checkpoints[i].position - checkpoints[i].forward * smoothing;
-                    bezierPath.MovePoint(handle2Index, handle2);
-                }
-
-                bezierPath.SetAnchorNormalAngle(i, 0);
-            }
+            ModifyBezierToRotateHandles(bezierPath: bezierPath, points: checkpoints, smoothing: smoothing);
 
             VertexPath vertexPath = new VertexPath(bezierPath: bezierPath, transform: transform, maxAngleError: 0.3f, minVertexDst: 0f);
 
@@ -101,6 +64,47 @@ public class TrackGenerator : MonoBehaviour
 
         meshFilter.sharedMesh = mesh;
         meshCollider.sharedMesh = mesh;
+    }
+
+    private void ModifyBezierToRotateHandles(BezierPath bezierPath, List<Transform> points, float smoothing)
+    {
+        //Set handles to be parallel to gate
+        for (int i = 0; i < points.Count; i++)
+        {
+            // The library uses a stupid way of editing control handels
+            int handle1Index, handle2Index;
+
+            if (i == 0)
+            {
+                handle1Index = -1;
+                handle2Index = 1;
+            }
+            else if (i == points.Count - 1)
+            {
+                handle1Index = i * 3 - 1;
+                handle2Index = -1;
+            }
+            else
+            {
+                handle1Index = i * 3 - 1;
+                handle2Index = i * 3 + 1;
+            }
+
+            if (handle1Index != -1)
+            {
+                Vector3 handle1 = points[i].position + points[i].forward * smoothing;
+                bezierPath.MovePoint(handle1Index, handle1);
+            }
+
+            if (handle2Index != -1)
+            {
+                Vector3 handle2 = points[i].position - points[i].forward * smoothing;
+                bezierPath.MovePoint(handle2Index, handle2);
+            }
+
+            bezierPath.SetAnchorNormalAngle(i, 0);
+        }
+
     }
 
 
