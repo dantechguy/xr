@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     private TrackManager trackManager;
 
     [SerializeField] private Timer timer;
+    [SerializeField] private CarReplay carReplay;
 
     private List<Waypoint> wayPoints_ = new List<Waypoint>();
     private int nextWaypoint_;
@@ -38,9 +39,12 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void StartTimer()
+    public void StartTimer(PrometeoCarController _car)
     {
         timer.StartTimer();
+        
+        carReplay.objectReplay.trackedObject = _car.transform;
+        carReplay.RaceStart();
     }
 
     public void Disable()
@@ -49,6 +53,8 @@ public class GameManager : MonoBehaviour
             waypoint.SetToNotCompleted();
 
         timer.ResetTimer();
+        
+        carReplay.RaceCancel();
     }
 
     public void SetNextWayPoint(int _index)
@@ -79,6 +85,7 @@ public class GameManager : MonoBehaviour
         {
             XLogger.Log(Category.GameManager, "Race Finished");
             timer.StopTimer();
+            carReplay.RaceFinish();
             return;
         }
 

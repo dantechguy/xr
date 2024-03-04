@@ -56,7 +56,7 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
         
         SetUpCarControls();
         
-        gameManager.StartTimer();
+        gameManager.StartTimer(car_);
     }
 
     private void SetUpCarControls()

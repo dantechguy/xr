@@ -15,5 +15,4 @@ public class SelectedPlaneTransformer : MonoBehaviour
         selectionInfo.ClearSelected();
         GamePhaseManger.instance.SwitchPhase(GamePhaseManger.GamePhase.Spawn);
     }
-
 }
