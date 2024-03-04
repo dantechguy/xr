@@ -965,11 +965,17 @@ public class PrometeoCarController : MonoBehaviour
                 {
                     RLWTireSkid.emitting = true;
                     RRWTireSkid.emitting = true;
+                    if (localVelocityX < -0.01)
+                        RLWParticleSystem.Play();
+                    if (localVelocityX > 0.01)
+                        RRWParticleSystem.Play();
                 }
                 else
                 {
                     RLWTireSkid.emitting = false;
                     RRWTireSkid.emitting = false;
+                    RLWParticleSystem.Stop();
+                    RRWParticleSystem.Stop();
                 }
             }
             catch (Exception ex)
