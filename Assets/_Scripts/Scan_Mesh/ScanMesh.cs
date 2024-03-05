@@ -350,6 +350,17 @@ public class ScanMesh : MonoBehaviour
         // var meshRenderer = body.GetComponent<MeshRenderer>();
         // meshRenderer.material = arMeshManager.meshes[0].GetComponent<MeshRenderer>().material;
 
+        // Rotate vertices
+        Vector3[] vertices = scannedMesh.mesh.vertices;
+        for (int i = 0; i < vertices.Length; i++)
+        {
+            vertices[i] = scanMeshSelector.GetRotation() * vertices[i];
+        }
+        scannedMesh.mesh.vertices = vertices;
+        scannedMesh.mesh.RecalculateNormals();
+        scannedMesh.mesh.RecalculateBounds();
+        scannedMesh.mesh.RecalculateTangents();
+
         // Save to file
         MeshAndTexture meshAndTexture = new MeshAndTexture();
         meshAndTexture.vertices = scannedMesh.mesh.vertices;
@@ -408,6 +419,12 @@ public class ScanMesh : MonoBehaviour
         {
             throw new Exception("file does not exist");
         }
+    }
+
+    public void InstantiateCarFile(string filename)
+    {
+        GameObject car = OpenCarFile(filename);
+        Instantiate(car);
     }
 }
 

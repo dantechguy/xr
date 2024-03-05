@@ -22,6 +22,11 @@ public class ScanMeshSelector : MonoBehaviour
 
     private GameObject instantiatedSelectorBox;
 
+    public Quaternion GetRotation()
+    {
+        return instantiatedSelectorBox.transform.rotation;
+    }
+
     public void HideSelectorBox(bool hide)
     {
         instantiatedSelectorBox.SetActive(!hide);
