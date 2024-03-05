@@ -113,8 +113,6 @@ public class SelectInputManager : MonoBehaviour
                                                   initialTouch1Position.x - initialTouch0Position.x) * Mathf.Rad2Deg;
                 float currentAngle = Mathf.Atan2(currentTouch1Position.y - currentTouch0Position.y,
                                                   currentTouch1Position.x - currentTouch0Position.x) * Mathf.Rad2Deg;
-                print(initialAngle);
-                print(currentAngle);
                 float angleOffset = currentAngle - initialAngle - initialObjectRotation;
                 selectedTransformer.ApplyRotation(-angleOffset);
             }
