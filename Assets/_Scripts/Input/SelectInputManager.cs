@@ -25,6 +25,8 @@ public class SelectInputManager : MonoBehaviour
     private float initialObjectRotation;
     private float initialObjectScale;
 
+    private bool didHaveTwoFingers = false;
+
     private void OnEnable()
     {
         if (actions_ == null)
@@ -54,11 +56,15 @@ public class SelectInputManager : MonoBehaviour
             }
         }
 
-        if (Input.touchCount == 1)
+        if (Input.touchCount == 0)
+        {
+            didHaveTwoFingers = false;
+        }
+        else if (Input.touchCount == 1 && !didHaveTwoFingers)
         {
             Touch touch0 = Input.GetTouch(0);
 
-            if (touch0.phase == UnityEngine.TouchPhase.Moved)
+            if (touch0.phase == UnityEngine.TouchPhase.Moved || (touch0.phase == UnityEngine.TouchPhase.Ended && !didHaveTwoFingers))
             {
 
                 var hits = new List<ARRaycastHit>();
@@ -72,6 +78,8 @@ public class SelectInputManager : MonoBehaviour
         // Check if there are two touches for pinch and twist gestures
         else if (Input.touchCount == 2)
         {
+            didHaveTwoFingers = true;
+
             Touch touch0 = Input.GetTouch(0);
             Touch touch1 = Input.GetTouch(1);
 
@@ -89,17 +97,14 @@ public class SelectInputManager : MonoBehaviour
             }
 
             // Twist gesture
-            if (touch0.phase == UnityEngine.TouchPhase.Began)
+            if (touch0.phase == UnityEngine.TouchPhase.Began || touch1.phase == UnityEngine.TouchPhase.Began)
             {
                 initialTouch0Position = touch0.position;
-                initialObjectRotation = selectedTransformer.GetRotation();
-            }
-            else if (touch1.phase == UnityEngine.TouchPhase.Began)
-            {
                 initialTouch1Position = touch1.position;
                 initialObjectRotation = selectedTransformer.GetRotation();
             }
-            else if ((touch0.phase == UnityEngine.TouchPhase.Moved || touch1.phase == UnityEngine.TouchPhase.Moved) &&
+
+            if ((touch0.phase == UnityEngine.TouchPhase.Moved || touch1.phase == UnityEngine.TouchPhase.Moved) &&
                      (touch0.phase != UnityEngine.TouchPhase.Began || touch1.phase != UnityEngine.TouchPhase.Began))
             {
                 Vector2 currentTouch0Position = touch0.position;
@@ -108,6 +113,8 @@ public class SelectInputManager : MonoBehaviour
                                                   initialTouch1Position.x - initialTouch0Position.x) * Mathf.Rad2Deg;
                 float currentAngle = Mathf.Atan2(currentTouch1Position.y - currentTouch0Position.y,
                                                   currentTouch1Position.x - currentTouch0Position.x) * Mathf.Rad2Deg;
+                print(initialAngle);
+                print(currentAngle);
                 float angleOffset = currentAngle - initialAngle - initialObjectRotation;
                 selectedTransformer.ApplyRotation(-angleOffset);
             }
