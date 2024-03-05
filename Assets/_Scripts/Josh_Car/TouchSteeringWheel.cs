@@ -32,9 +32,11 @@ public class TouchSteeringWheel : MonoBehaviour
                         if (!isDragging && RectTransformUtility.RectangleContainsScreenPoint(wheel, touch.position))
                         {
                             isDragging = true;
-                            Vector2 direction = touch.position - new Vector2(wheel.position.x, wheel.position.y);
-                            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90;
-                            startAngle = angle - currentRotation;
+                            float deltaX = (wheel.position.x - touch.position.x) / (wheel.rect.width / 2);
+                            float angle = deltaX * 90;
+                            startAngle = 0;// = angle - currentRotation;
+                            SetSteeringAngle(angle);
+                            currentRotation = angle;
                             touchId = i;
                         }
                         break;
@@ -43,10 +45,8 @@ public class TouchSteeringWheel : MonoBehaviour
                     {
                         if (isDragging && touchId == i)
                         {
-                            Vector2 direction = touch.position - new Vector2(wheel.position.x, wheel.position.y);
-                            float angle = Mathf.Clamp(-Mathf.Atan2(direction.x, direction.y) * Mathf.Rad2Deg - startAngle, -180f, 180f);
-                            // Apply rotation to your vehicle controller or steering wheel visualization
-                            // For example:
+                            float deltaX = (wheel.position.x - touch.position.x) / (wheel.rect.width / 2);
+                            float angle = deltaX * 90;
                             SetSteeringAngle(angle);
                             currentRotation = angle;
                         }
@@ -91,6 +91,6 @@ public class TouchSteeringWheel : MonoBehaviour
 
     public float GetSteering()
     {
-        return -currentRotation / 250f;
+        return -currentRotation / 90f;
     }
 }
