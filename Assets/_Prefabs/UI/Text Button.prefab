@@ -260,6 +260,7 @@ GameObject:
   - component: {fileID: 6123562302366750029}
   - component: {fileID: 7920627073291134632}
   - component: {fileID: 3991030236951705042}
+  - component: {fileID: 5721151914296178613}
   m_Layer: 5
   m_Name: Text Button
   m_TagString: Untagged
@@ -411,6 +412,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 2
   m_VerticalFit: 2
+--- !u!114 &5721151914296178613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5324537806883843786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b264e76f0ee435a9afa95cfd0aa119c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  clickSound: {fileID: 8300000, guid: 9716e7122a23d3042a1f564305c960dc, type: 3}
+  mixer: {fileID: 24300002, guid: af0e7ab1eee79414eacec8f02c9c5b35, type: 2}
 --- !u!1 &8400011973690170534
 GameObject:
   m_ObjectHideFlags: 0

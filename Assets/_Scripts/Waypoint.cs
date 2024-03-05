@@ -13,6 +13,9 @@ public class Waypoint : MonoBehaviour
     [SerializeField] private Material completedMaterial;
     [SerializeField] private Material uncompletedMaterial;
     [SerializeField] private Material nextWaypointMaterial;
+    
+    [Header("Sounds")]
+    [SerializeField] private List<AudioSource> waypointPastSounds;
 
     private int orderInTrack_;
     private GameManager gameManager_;
@@ -58,6 +61,12 @@ public class Waypoint : MonoBehaviour
         {
             XLogger.Log(Category.GameManager, "Car passed through the correct waypoint");
             gameManager_.SetNextWayPoint(orderInTrack_+1);
+            
+            if (waypointPastSounds.Count > 0)
+            {
+                var randomIndex = UnityEngine.Random.Range(0, waypointPastSounds.Count);
+                waypointPastSounds[randomIndex].Play();
+            }
         }
         else
         {
