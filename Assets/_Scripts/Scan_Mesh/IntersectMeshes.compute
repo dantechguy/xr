@@ -1,0 +1,73 @@
+#pragma kernel CSMain
+
+// Buffers
+StructuredBuffer<float3> vertices;
+RWStructuredBuffer<int> trianglesInsideSelectorMask;
+
+float3 selectorPoints[4];
+float selectorHeight;
+int totalVertices;
+
+[numthreads(64, 1, 1)]
+void CSMain(uint3 id : SV_DispatchThreadID) {
+    if (3*id.x >= totalVertices) {
+        return;
+    }
+
+    // Read vertex data from texture
+    float3 curVertices[3];
+    for (int i = 0; i<3; i++) {
+        curVertices[i] = vertices[3*id.x + i];
+    }
+    
+    bool isInside = true;
+
+    // Check if all points are inside the selector
+    for (int j = 0; j<3; j++) {
+        float3 vertex = curVertices[j];
+
+        // Check on the xz plane
+        bool isInsideXZ = false;
+        int k = 3;
+
+        for (int l = 0; l < 4; l++)
+        {
+            if ((selectorPoints[l].z < vertex.z && selectorPoints[k].z >= vertex.z ||
+                    selectorPoints[k].z < vertex.z && selectorPoints[l].z >= vertex.z) &&
+                    (selectorPoints[l].x <= vertex.x || selectorPoints[k].x <= vertex.x))
+            {
+                if (selectorPoints[l].x + (vertex.z - selectorPoints[l].z) /
+                    (selectorPoints[k].z - selectorPoints[l].z) * (selectorPoints[k].x - selectorPoints[l].x) < vertex.x)
+                {
+                    isInsideXZ = !isInsideXZ;
+                }
+            }
+            k = l;
+        }
+
+        // Check on the y plane
+        float minY = selectorPoints[0].y;
+
+        for (int m = 0; m < 4; m++) {
+            if (selectorPoints[m].y < minY)
+                minY = selectorPoints[m].y;
+        }
+        float maxY = minY + selectorHeight;
+
+        bool isInsideY = vertex.y > minY && vertex.y < maxY;
+
+        isInside = isInside && isInsideXZ && isInsideY;
+    }
+
+    if (isInside) {
+        trianglesInsideSelectorMask[3*id.x] = 1;
+        trianglesInsideSelectorMask[3*id.x+1] = 1;
+        trianglesInsideSelectorMask[3*id.x+2] = 1;
+    }
+    else {
+        trianglesInsideSelectorMask[3*id.x] = 0;
+        trianglesInsideSelectorMask[3*id.x+1] = 0;
+        trianglesInsideSelectorMask[3*id.x+2] = 0;
+    }
+
+}

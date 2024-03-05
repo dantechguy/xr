@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
+using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Mathematics;
@@ -23,13 +25,15 @@ public class ScanMesh : MonoBehaviour
     [SerializeField] private ARCameraManager cameraManager;
     [SerializeField] private Transform cameraOffset;
     [SerializeField] private GameObject carBase;
+    [SerializeField] private MeshFilter scannedMesh;
     [SerializeField] private float itemMeshSize;
-    public ComputeShader computeShader;
+    [SerializeField] private ScanMeshSelector scanMeshSelector;
+    public ComputeShader meshVertexProcessingComputeShader;
+    public ComputeShader intersectMeshesComputeShader;
 
     private int textureIndex = 0; // index of uv channel we are currently using
     private const int totalTextures = 6;
     Texture2D atlasTexture;
-
 
     bool shouldExtractTexturedMesh = false;
 
@@ -54,7 +58,22 @@ public class ScanMesh : MonoBehaviour
         if (!shouldExtractTexturedMesh || eventArgs.projectionMatrix == null)
             return;
 
-        arMeshManager.enabled = false;
+        // if ar mesh manager is still enabled, disable it and preprocess the meshes
+        if (arMeshManager.enabled)
+        {
+            arMeshManager.enabled = false;
+
+            scannedMesh.mesh = CombineMeshes(arMeshManager.meshes);
+
+            MakeVerticesUnique(scannedMesh);
+            print(scannedMesh.mesh.vertices.Length);
+            print(scannedMesh.mesh.triangles.Length);
+            RemoveMeshOutsideOfSelector(scannedMesh);
+            print(scannedMesh.mesh.vertices.Length);
+            print(scannedMesh.mesh.triangles.Length);
+
+            scanMeshSelector.HideSelectorBox(true);
+        }
 
         shouldExtractTexturedMesh = false;
         if (cameraManager.TryAcquireLatestCpuImage(out XRCpuImage cameraImage))
@@ -114,75 +133,151 @@ public class ScanMesh : MonoBehaviour
 
             materialWithTexture.mainTexture = atlasTexture;
 
-            // Get the mesh from ArMeshManager
-            var meshes = arMeshManager.meshes;
-
             // Generate texture
             Matrix4x4 viewMatrix = mainCamera.worldToCameraMatrix;
-            foreach (MeshFilter meshFilter in meshes)
+
+            if (scannedMesh.mesh.uv == null || scannedMesh.mesh.uv.Length == 0)
             {
-                if (meshFilter.mesh.vertices.Length != meshFilter.mesh.triangles.Length)
-                    MakeVerticesUnique(meshFilter);
-
-                if (meshFilter.mesh.uv == null || meshFilter.mesh.uv.Length == 0)
+                Vector2[] uvsInit = new Vector2[scannedMesh.mesh.vertices.Length];
+                for (int i = 0; i < uvsInit.Length; i++)
                 {
-                    Vector2[] uvsInit = new Vector2[meshFilter.mesh.vertices.Length];
-                    for (int i = 0; i < uvsInit.Length; i++)
-                    {
-                        uvsInit[i] = new Vector2(-1, -1);
-                    }
-                    meshFilter.mesh.SetUVs(0, uvsInit);
+                    uvsInit[i] = new Vector2(-1, -1);
                 }
-
-                Vector2[] uvs = meshFilter.mesh.uv;
-
-                Matrix4x4 worldToScreenMatrix = eventArgs.projectionMatrix.Value * mainCamera.worldToCameraMatrix * cameraOffset.localToWorldMatrix;
-                float[] worldToScreenMatrixFlat = new float[16];
-                for (int i = 0; i < 16; i++)
-                    worldToScreenMatrixFlat[i] = worldToScreenMatrix[i % 4, i / 4];
-
-                NativeArray<Vector3> cameraForwardArray = new NativeArray<Vector3>(1, Allocator.Temp);
-                cameraForwardArray[0] = mainCamera.transform.forward;
-
-                int kernelIndex = computeShader.FindKernel("CSMain");
-
-                // Create buffers
-                ComputeBuffer verticesBuffer = new ComputeBuffer(meshFilter.mesh.vertices.Length, sizeof(float) * 3);
-                ComputeBuffer normalsBuffer = new ComputeBuffer(meshFilter.mesh.normals.Length, sizeof(float) * 3);
-                ComputeBuffer uvsBuffer = new ComputeBuffer(meshFilter.mesh.uv.Length, sizeof(float) * 2);
-                ComputeBuffer worldToScreenMatrixBuffer = new ComputeBuffer(1, sizeof(float) * 16);
-                ComputeBuffer cameraForwardBuffer = new ComputeBuffer(1, sizeof(float) * 3);
-
-                // Set buffers
-                verticesBuffer.SetData(meshFilter.mesh.vertices);
-                normalsBuffer.SetData(meshFilter.mesh.normals);
-                uvsBuffer.SetData(meshFilter.mesh.uv);
-                worldToScreenMatrixBuffer.SetData(worldToScreenMatrixFlat);
-                cameraForwardBuffer.SetData(cameraForwardArray);
-
-                // Set compute shader parameters
-                computeShader.SetBuffer(kernelIndex, "vertices", verticesBuffer);
-                computeShader.SetBuffer(kernelIndex, "normals", normalsBuffer);
-                computeShader.SetBuffer(kernelIndex, "uvs", uvsBuffer);
-                computeShader.SetMatrix("worldToScreenMatrix", worldToScreenMatrix);
-                computeShader.SetVector("cameraForward", -mainCamera.transform.forward);
-                computeShader.SetInt("TOTAL_TEXTURES", totalTextures);
-                computeShader.SetInt("TEXTURE_INDEX", textureIndex);
-
-                // Dispatch compute shader
-                computeShader.Dispatch(kernelIndex, meshFilter.mesh.vertices.Length / 64 / 3, 1, 1);
-
-                uvsBuffer.GetData(uvs);
-
-
-
-                meshFilter.mesh.SetUVs(0, uvs);
-
-                // Apply texture to material
-                meshFilter.GetComponent<MeshRenderer>().material = materialWithTexture;
+                scannedMesh.mesh.SetUVs(0, uvsInit);
             }
+
+            Vector2[] uvs = scannedMesh.mesh.uv;
+
+            Matrix4x4 worldToScreenMatrix = eventArgs.projectionMatrix.Value * mainCamera.worldToCameraMatrix;
+            float[] worldToScreenMatrixFlat = new float[16];
+            for (int i = 0; i < 16; i++)
+                worldToScreenMatrixFlat[i] = worldToScreenMatrix[i % 4, i / 4];
+
+            NativeArray<Vector3> cameraForwardArray = new NativeArray<Vector3>(1, Allocator.Temp);
+            cameraForwardArray[0] = mainCamera.transform.forward;
+
+            int kernelIndex = meshVertexProcessingComputeShader.FindKernel("CSMain");
+
+            // Create buffers
+            ComputeBuffer verticesBuffer = new ComputeBuffer(scannedMesh.mesh.vertices.Length, sizeof(float) * 3);
+            ComputeBuffer normalsBuffer = new ComputeBuffer(scannedMesh.mesh.normals.Length, sizeof(float) * 3);
+            ComputeBuffer uvsBuffer = new ComputeBuffer(scannedMesh.mesh.uv.Length, sizeof(float) * 2);
+            ComputeBuffer worldToScreenMatrixBuffer = new ComputeBuffer(1, sizeof(float) * 16);
+            ComputeBuffer cameraForwardBuffer = new ComputeBuffer(1, sizeof(float) * 3);
+
+            // Set buffers
+            verticesBuffer.SetData(scannedMesh.mesh.vertices);
+            normalsBuffer.SetData(scannedMesh.mesh.normals);
+            uvsBuffer.SetData(scannedMesh.mesh.uv);
+            worldToScreenMatrixBuffer.SetData(worldToScreenMatrixFlat);
+            cameraForwardBuffer.SetData(cameraForwardArray);
+
+            // Set compute shader parameters
+            meshVertexProcessingComputeShader.SetBuffer(kernelIndex, "vertices", verticesBuffer);
+            meshVertexProcessingComputeShader.SetBuffer(kernelIndex, "normals", normalsBuffer);
+            meshVertexProcessingComputeShader.SetBuffer(kernelIndex, "uvs", uvsBuffer);
+            meshVertexProcessingComputeShader.SetMatrix("worldToScreenMatrix", worldToScreenMatrix);
+            meshVertexProcessingComputeShader.SetVector("cameraForward", -mainCamera.transform.forward);
+            meshVertexProcessingComputeShader.SetInt("TOTAL_TEXTURES", totalTextures);
+            meshVertexProcessingComputeShader.SetInt("TEXTURE_INDEX", textureIndex);
+
+            // Dispatch compute shader
+            meshVertexProcessingComputeShader.Dispatch(kernelIndex, scannedMesh.mesh.vertices.Length / 64 / 3, 1, 1);
+
+            uvsBuffer.GetData(uvs);
+
+
+
+            scannedMesh.mesh.SetUVs(0, uvs);
+
+            // Apply texture to material
+            scannedMesh.GetComponent<MeshRenderer>().material = materialWithTexture;
+
             textureIndex = (textureIndex + 1) % totalTextures; // Loop through all textures
         }
+    }
+
+    void RemoveMeshOutsideOfSelector(MeshFilter meshFilter)
+    {
+
+        // int kernelIndex = intersectMeshesComputeShader.FindKernel("CSMain");
+
+        // Vector4[] selectorPoints = new Vector4[4];
+        // for (int i = 0; i < 4; i++)
+        // {
+        //     selectorPoints[i] = new Vector4(scanMeshSelector.cornerPoints[i].x, scanMeshSelector.cornerPoints[i].y, scanMeshSelector.cornerPoints[i].z);
+        // }
+
+
+        // // Create buffers
+        // ComputeBuffer verticesBuffer = new ComputeBuffer(meshFilter.mesh.vertices.Length, sizeof(float) * 3);
+        // ComputeBuffer trianglesInsideSelectorMaskBuffer = new ComputeBuffer(meshFilter.mesh.vertices.Length, sizeof(int));
+
+        // // Set buffers
+        // verticesBuffer.SetData(meshFilter.mesh.vertices);
+
+        // // Set compute shader parameters
+        // intersectMeshesComputeShader.SetBuffer(kernelIndex, "vertices", verticesBuffer);
+        // intersectMeshesComputeShader.SetBuffer(kernelIndex, "trianglesInsideSelectorMask", trianglesInsideSelectorMaskBuffer);
+        // intersectMeshesComputeShader.SetVectorArray("selectorPoints", selectorPoints);
+        // intersectMeshesComputeShader.SetFloat("selectorHeight", scanMeshSelector.selectorHeight);
+        // intersectMeshesComputeShader.SetInt("totalVertices", meshFilter.mesh.vertices.Length);
+
+        // // Dispatch compute shader
+        // intersectMeshesComputeShader.Dispatch(kernelIndex, meshFilter.mesh.vertices.Length / 64 / 3 + 1, 1, 1);
+
+        // int[] trianglesInsideSelectorMask = new int[meshFilter.mesh.vertices.Length];
+        // trianglesInsideSelectorMaskBuffer.GetData(trianglesInsideSelectorMask);
+
+
+        // Mesh mesh = meshFilter.mesh;
+
+        // int trianglesInsideSelectorCount = 0;
+        // for (int i = 0; i < mesh.triangles.Length; i++)
+        // {
+        //     if (trianglesInsideSelectorMask[i] == 1)
+        //         trianglesInsideSelectorCount++;
+        // }
+        // print(trianglesInsideSelectorCount);
+        // trianglesInsideSelectorCount = trianglesInsideSelectorCount - trianglesInsideSelectorCount % 3;
+
+        // int[] newTriangles = new int[trianglesInsideSelectorCount];
+
+        // int j = 0;
+        // for (int i = 0; i < trianglesInsideSelectorCount; i++)
+        // {
+        //     if (trianglesInsideSelectorMask[i] == 1)
+        //     {
+        //         newTriangles[j] = mesh.triangles[i];
+        //         j++;
+        //     }
+        // }
+
+        // mesh.triangles = newTriangles;
+
+        List<int> newTriangles = new List<int>();
+        Mesh mesh = meshFilter.mesh;
+
+        Vector3[] vertices = mesh.vertices;
+        int[] triangles = mesh.triangles;
+
+        for (int i = 0; i < mesh.triangles.Length; i += 3)
+        {
+            if (scanMeshSelector.IsPointInsideSelector(vertices[triangles[i]]) &&
+                scanMeshSelector.IsPointInsideSelector(vertices[triangles[i + 1]]) &&
+                scanMeshSelector.IsPointInsideSelector(vertices[triangles[i + 2]]))
+            {
+                newTriangles.Add(triangles[i]);
+                newTriangles.Add(triangles[i + 1]);
+                newTriangles.Add(triangles[i + 2]);
+            }
+        }
+
+        // This leaves a bunch of redundant info in the vertices, but we remove that in the MakeVerticesUnique function
+        mesh.triangles = newTriangles.ToArray();
+
+        print(mesh.triangles.Length);
+        print(newTriangles.ToArray().Length);
     }
 
     void MakeVerticesUnique(MeshFilter meshFilter)
@@ -237,7 +332,7 @@ public class ScanMesh : MonoBehaviour
         return combinedMesh.bounds;
     }
 
-    public void CreateCar()
+    public void SaveCarToFile(string filename)
     {
         // GameObject car = Instantiate(carBase);
 
@@ -256,24 +351,23 @@ public class ScanMesh : MonoBehaviour
         // meshRenderer.material = arMeshManager.meshes[0].GetComponent<MeshRenderer>().material;
 
         // Save to file
-        Mesh combinedMeshes = CombineMeshes(arMeshManager.meshes);
         MeshAndTexture meshAndTexture = new MeshAndTexture();
-        meshAndTexture.vertices = combinedMeshes.vertices;
-        meshAndTexture.triangles = combinedMeshes.triangles;
-        meshAndTexture.normals = combinedMeshes.normals;
-        meshAndTexture.uv = combinedMeshes.uv;
+        meshAndTexture.vertices = scannedMesh.mesh.vertices;
+        meshAndTexture.triangles = scannedMesh.mesh.triangles;
+        meshAndTexture.normals = scannedMesh.mesh.normals;
+        meshAndTexture.uv = scannedMesh.mesh.uv;
         meshAndTexture.texture = atlasTexture;
 
         string json = JsonUtility.ToJson(meshAndTexture);
-        File.WriteAllText("testobj.json", json);
+        File.WriteAllText(filename, json);
     }
 
-    public void OpenCarFile()
+    public GameObject OpenCarFile(string filename)
     {
-        if (File.Exists("testobj.json"))
+        if (File.Exists(filename))
         {
             BinaryFormatter formatter = new BinaryFormatter();
-            string jsonData = File.ReadAllText("testobj.json");
+            string jsonData = File.ReadAllText(filename);
             MeshAndTexture meshAndTexture = JsonUtility.FromJson<MeshAndTexture>(jsonData);
 
             Mesh mesh = new Mesh();
@@ -288,7 +382,7 @@ public class ScanMesh : MonoBehaviour
             materialWithTexture.mainTexture = texture;
 
 
-            GameObject car = Instantiate(carBase);
+            GameObject car = carBase;
 
             GameObject body = car.GetNamedChild("Body");
             body.GetComponent<MeshFilter>().mesh = mesh;
@@ -299,10 +393,20 @@ public class ScanMesh : MonoBehaviour
                 colliderBounds.size.z / bounds.size.z);
             body.transform.localScale *= scaleFactor;
 
-            body.transform.position = new Vector3(0, -GetBounds(body).min.y, 0);
+            var bodyBounds = GetBounds(body);
+            Vector3 center = bodyBounds.center;
+            body.transform.position = new Vector3(-center.x, -bodyBounds.min.y, -center.z);
 
             var meshRenderer = body.GetComponent<MeshRenderer>();
             meshRenderer.material = materialWithTexture;
+
+            car.transform.position = new Vector3(0, 2, 0);
+
+            return car;
+        }
+        else
+        {
+            throw new Exception("file does not exist");
         }
     }
 }
