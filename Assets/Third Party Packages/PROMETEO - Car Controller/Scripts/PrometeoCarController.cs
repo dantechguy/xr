@@ -417,7 +417,7 @@ public class PrometeoCarController : MonoBehaviour
                     float engineSoundPitch =
                         initialCarEngineSoundPitch + (Mathf.Abs(carRigidbody.velocity.magnitude) / 25f);
                     carEngineSound.pitch = engineSoundPitch;
-                    
+
                     if (!carEngineSound.isPlaying)
                     {
                         carEngineSound.Play();
@@ -461,10 +461,19 @@ public class PrometeoCarController : MonoBehaviour
 
     public void SetSteering(float steering)
     {
+        if (steering > 1 || steering < -1)
+        {
+            Handbrake();
+        }
+        else if (isTractionLocked)
+        {
+            RecoverTraction();
+            DriftCarPS();
+        }
         steeringAxis = Mathf.Clamp(steering, -1, 1);
         var steeringAngle = steeringAxis * maxSteeringAngle;
-        frontLeftCollider.steerAngle = Mathf.Lerp(frontLeftCollider.steerAngle, steeringAngle, steeringSpeed);
-        frontRightCollider.steerAngle = Mathf.Lerp(frontRightCollider.steerAngle, steeringAngle, steeringSpeed);
+        frontLeftCollider.steerAngle = steeringAngle;
+        frontRightCollider.steerAngle = steeringAngle;
     }
 
     //The following method turns the front car wheels to the left. The speed of this movement will depend on the steeringSpeed variable.
