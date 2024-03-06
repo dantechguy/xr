@@ -167,7 +167,21 @@ public class PrometeoCarController : MonoBehaviour
         useTouchControls = enable;
         useKeyboardControls = enable;
     }
-    void Start()
+
+    private void OnDisable()
+    {
+        if (!useSounds) return;
+        
+        CancelInvoke(nameof(CarSounds));
+        
+        if (carEngineSound != null)
+            carEngineSound.Stop();
+
+        if (tireScreechSound != null)
+            tireScreechSound.Stop();
+    }
+
+    void OnEnable()
     {
         //In this part, we set the 'carRigidbody' value with the Rigidbody attached to this
         //gameObject. Also, we define the center of mass of the car with the Vector3 given

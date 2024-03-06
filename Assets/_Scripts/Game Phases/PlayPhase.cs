@@ -72,7 +72,10 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
         car_.EnableControl(true);
         car_.enabled = true;
         for (var i = 1; i < cars.Length; i++)
+        {
             cars[i].EnableControl(false);
+            car_.enabled = false;
+        }
 
         car_.touchAcceleratorObject = touchAcceleratorObject;
         car_.touchSteeringWheelObject = touchSteeringWheelObject;
@@ -87,7 +90,10 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
         gameManager.enabled = false;
 
         if (car_ != null)
+        {
             car_.EnableControl(false);
+            car_.enabled = false;
+        }
         
         StopAllCoroutines();
     }
