@@ -8,6 +8,7 @@ public class LapsCounter : MonoBehaviour
     [SerializeField] private TextMeshProUGUI counterText;
     [SerializeField] private Image icon;
     [SerializeField] private Image border;
+    [SerializeField] private GameObject flags;
     [Header("Colors")]
     [SerializeField] private Color lastLapColor;
     [SerializeField] private Color finishedColor;
@@ -36,5 +37,7 @@ public class LapsCounter : MonoBehaviour
         counterText.color = color;
         icon.color = color;
         border.color = color;
+        
+        flags.SetActive(remain == 0);
     }
 }
