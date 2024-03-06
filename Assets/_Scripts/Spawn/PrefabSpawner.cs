@@ -43,6 +43,7 @@ public class PrefabSpawner : AbstractHitConsumer
 
         // attache AR anchor
         ARAnchor anchor = anchorManager.AttachAnchor(plane, _hit.pose);
+        anchor.destroyOnRemoval = false;
         spawnedObject.transform.SetParent(anchor.transform);
 
         // immediately select the spawned object

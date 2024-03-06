@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using Logging;
 using TMPro;
 using UnityEngine;
@@ -25,11 +26,16 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
 
 
     private PrometeoCarController car_;
+    private Outline carOutline_;
     private CustomCarController car_old_;
+    private Camera camera_;
 
     public void Enable()
     {
         StartCoroutine(CoEnable());
+
+        if (camera_ == null)
+            camera_ = Camera.main;
 
         // SetUpCarControlsOld();
     }
@@ -52,10 +58,11 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
             countDownText.text = "1";
             yield return new WaitForSeconds(1);
         }
+
         parent.gameObject.SetActive(false);
-        
+
         SetUpCarControls();
-        
+
         gameManager.StartTimer(car_);
     }
 
@@ -69,6 +76,7 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
         }
 
         car_ = cars[0];
+        carOutline_ = car_.GetComponent<Outline>();
         car_.EnableControl(true);
         car_.enabled = true;
         for (var i = 1; i < cars.Length; i++)
@@ -93,9 +101,33 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
         {
             car_.EnableControl(false);
             car_.enabled = false;
+            carOutline_.OutlineMode = Outline.Mode.OutlineAll;
+            carOutline_.enabled = false;
+            car_ = null;
+            carOutline_ = null;
         }
-        
+
         StopAllCoroutines();
+    }
+
+    private void Update()
+    {
+        if (car_ == null || carOutline_ == null) return;
+
+        // turn on outline of car if car is invisible/blocked
+        Vector3 direction = car_.transform.position - camera_.transform.position;
+        if (Physics.Raycast(camera_.transform.position, direction, out RaycastHit hit, 100))
+        {
+            if (!hit.collider.CompareTag("Player"))
+            {
+                carOutline_.OutlineMode = Outline.Mode.OutlineHidden;
+                carOutline_.enabled = true;
+                return;
+            }
+        }
+
+        carOutline_.OutlineMode = Outline.Mode.OutlineAll;
+        carOutline_.enabled = false;
     }
 
     private void SetUpCarControlsOld()
