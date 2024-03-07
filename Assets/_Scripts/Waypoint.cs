@@ -17,6 +17,8 @@ public class Waypoint : MonoBehaviour
     [Header("Sounds")]
     [SerializeField] private List<AudioSource> waypointPastSounds;
 
+    [Header("Effects")] [SerializeField] private ParticleSystem passGateEffect;
+
     private int orderInTrack_;
     private GameManager gameManager_;
 
@@ -50,7 +52,7 @@ public class Waypoint : MonoBehaviour
         targetMesh.material = uncompletedMaterial;
     }
 
-    public void OnCarPassThrough()
+    public void OnCarPassThrough(Vector3 _passPosition)
     {
         if (gameManager_ == null)
         {
@@ -61,6 +63,9 @@ public class Waypoint : MonoBehaviour
         {
             XLogger.Log(Category.GameManager, "Car passed through the correct waypoint");
             gameManager_.SetNextWayPoint(orderInTrack_+1);
+            
+            passGateEffect.transform.position = _passPosition;
+            passGateEffect.Play();
             
             if (waypointPastSounds.Count > 0)
             {

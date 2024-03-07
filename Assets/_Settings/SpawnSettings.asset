@@ -21,7 +21,8 @@ MonoBehaviour:
   - {fileID: 8959198062474703463, guid: 84476acca2bbc49409082283313e2076, type: 3}
   - {fileID: 3864754208080454657, guid: 2e60c326023671f4abd3c93d55608b2e, type: 3}
   - {fileID: 8964046567725098893, guid: dc55c014d3636754498befae12c2ebf1, type: 3}
-  activePrefabIndex: 4
+  - {fileID: 8964046567725098893, guid: 81d519a1ffffab74b9a739d4e66f0d3d, type: 3}
+  activePrefabIndex: 8
   selectRightAfterSpawn: 1
   trackScale: 0.30214512
   isClosed: 1

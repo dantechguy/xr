@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
+using Logging;
 using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
@@ -15,7 +16,6 @@ using UnityEngine.Rendering;
 using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
-
 
 public class ScanMesh : MonoBehaviour
 {
@@ -371,12 +371,16 @@ public class ScanMesh : MonoBehaviour
 
         string json = JsonUtility.ToJson(meshAndTexture);
         File.WriteAllText(filename, json);
+        
+        XLogger.Log(Category.Scan, $"Car saved to file {filename}");
     }
 
     public GameObject OpenCarFile(string filename)
     {
         if (File.Exists(filename))
         {
+            XLogger.Log(Category.Scan, $"Opening car file {filename}");
+            
             BinaryFormatter formatter = new BinaryFormatter();
             string jsonData = File.ReadAllText(filename);
             MeshAndTexture meshAndTexture = JsonUtility.FromJson<MeshAndTexture>(jsonData);
@@ -417,7 +421,8 @@ public class ScanMesh : MonoBehaviour
         }
         else
         {
-            throw new Exception("file does not exist");
+            XLogger.LogWarning(Category.Scan, $"File {filename} does not exist");
+            return null;
         }
     }
 

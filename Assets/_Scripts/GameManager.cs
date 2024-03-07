@@ -86,6 +86,9 @@ public class GameManager : MonoBehaviour
             XLogger.Log(Category.GameManager, "Race Finished");
             timer.StopTimer();
             carReplay.RaceFinish();
+            nextWaypoint_ = -1;
+            foreach (Waypoint waypoint in wayPoints_)
+                waypoint.SetToNotCompleted();
             return;
         }
 

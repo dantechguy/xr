@@ -23,7 +23,8 @@ namespace Logging
         Input,
         GamePhase,
         Select,
-        GameManager
+        GameManager,
+        Scan
     }
 
     public interface ILogOutput

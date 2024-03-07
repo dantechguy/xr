@@ -1,9 +1,16 @@
+using System;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 
 public class SelectedPlaneTransformer : MonoBehaviour
 {
     [SerializeField] private PlaneSelectionInfo selectionInfo;
+    [SerializeField] private Transform groundCollider;
+
+    private void Start()
+    {
+        groundCollider.gameObject.SetActive(false);
+    }
 
     public void Delete()
     {
@@ -14,5 +21,17 @@ public class SelectedPlaneTransformer : MonoBehaviour
         }
         selectionInfo.ClearSelected();
         GamePhaseManger.instance.SwitchPhase(GamePhaseManger.GamePhase.Spawn);
+    }
+
+    // set as the ground plane
+    public void Extend()
+    {
+        ARPlaneSelectable selected = selectionInfo.GetSelected();
+        selectionInfo.SetGroundCollider();
+        if (selected != null)
+        {
+            groundCollider.gameObject.SetActive(true);
+            groundCollider.position = selected.transform.position;
+        }
     }
 }
