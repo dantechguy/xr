@@ -424,7 +424,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b264e76f0ee435a9afa95cfd0aa119c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clickSound: {fileID: 8300000, guid: 9716e7122a23d3042a1f564305c960dc, type: 3}
+  clickSounds:
+  - {fileID: 8300000, guid: a3ed361184944734ba53e4f7226c09d2, type: 3}
   mixer: {fileID: 24300002, guid: af0e7ab1eee79414eacec8f02c9c5b35, type: 2}
 --- !u!1 &8400011973690170534
 GameObject:

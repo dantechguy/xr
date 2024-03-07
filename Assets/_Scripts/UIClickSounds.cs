@@ -6,7 +6,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Selectable))]
 public class UIClickSounds : MonoBehaviour
 {
-    [SerializeField] private AudioClip clickSound;
+    [SerializeField] private List<AudioClip> clickSounds;
     [SerializeField] private AudioMixerGroup mixer;
     
     private AudioSource source_;
@@ -30,7 +30,6 @@ public class UIClickSounds : MonoBehaviour
         source_ = audioSourceHolder.AddComponent<AudioSource>();
         source_.outputAudioMixerGroup = mixer;
         source_.priority = 0;
-        source_.clip = clickSound; 
         source_.playOnAwake = false;
     }
 
@@ -48,6 +47,7 @@ public class UIClickSounds : MonoBehaviour
 
     private void PlayClickSound()
     {
+        source_.clip = clickSounds[Random.Range(0, clickSounds.Count)];
         source_.Play();
     }
 }
