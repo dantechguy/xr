@@ -28,16 +28,16 @@ public class TrackGenerator : MonoBehaviour
         meshCollider = GetComponent<MeshCollider>();
     }
 
-    private void Update()
-    {
-        List<Transform> checkpoints = new List<Transform> {
-            GameObject.Find("c1").transform,
-            GameObject.Find("c2").transform,
-            GameObject.Find("c3").transform,
-            GameObject.Find("c4").transform,
-        };
-        GenerateTrack(checkpoints, trackScale: 0.5f, isClosed: false);
-    }
+    // private void Update()
+    // {
+    //     List<Transform> checkpoints = new List<Transform> {
+    //         GameObject.Find("c1").transform,
+    //         GameObject.Find("c2").transform,
+    //         GameObject.Find("c3").transform,
+    //         GameObject.Find("c4").transform,
+    //     };
+    //     GenerateTrack(checkpoints, trackScale: 0.5f, isClosed: false);
+    // }
 
     public void GenerateTrack(List<Transform> checkpoints, float trackScale, bool isClosed, float trackWidth = 1f, float trackSmoothing = 1f, float tableThickness = 0.5f)
     {
