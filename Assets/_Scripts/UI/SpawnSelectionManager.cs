@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using Logging;
@@ -18,7 +19,10 @@ public class SpawnSelectionManager : MonoBehaviour
     [Header("Select Item")] [SerializeField]
     private GameObject selectItemPrefab;
 
-    [SerializeField] private float baseSize;
+    [Header("Scan")] [SerializeField] private ScanMesh scanMesh;
+    [SerializeField] private string fileName;
+
+    [Header("3D UI")] [SerializeField] private float baseSize;
     [SerializeField] private float selectedSizeMultiplier;
     [SerializeField] private float rotationSpeed = 50f;
     [SerializeField] private float deselectRotationSpeed = 50f;
@@ -30,6 +34,18 @@ public class SpawnSelectionManager : MonoBehaviour
     {
         // reset active index
         spawnSettings.activePrefabIndex = 0;
+    }
+
+    private void OnEnable()
+    {
+        XLogger.Log(Category.UI, "SpawnSelectionManager enabled");
+
+        GameObject customCar = scanMesh.OpenCarFile(fileName);
+        if (customCar != null)
+        {
+            customCar.name = "Scanned Car";
+            spawnSettings.customCar = customCar;
+        }
 
         PopulateSelectItems();
     }
@@ -71,13 +87,16 @@ public class SpawnSelectionManager : MonoBehaviour
         }
 
         // populate layout group
-        for (int i = 0; i < spawnSettings.prefabs.Count; i++)
+        for (int i = 0; i < spawnSettings.prefabs.Count + 1; i++)
         {
+            bool last = i == spawnSettings.prefabs.Count;
+            if (last && spawnSettings.customCar == null) continue;
+
             GameObject selectItem = Instantiate(selectItemPrefab, layoutGroup.transform);
             var button = selectItem.GetComponent<Button>();
             GameObject meshWrapper = selectItem.GetNamedChild("MeshWrapper");
 
-            GameObject prefab = spawnSettings.prefabs[i];
+            GameObject prefab = last ? spawnSettings.customCar : spawnSettings.prefabs[i];
             GameObject prefabObject = Instantiate(prefab, meshWrapper.transform);
             prefabObject.SetLayerRecursively(LayerMask.NameToLayer("UI"));
 

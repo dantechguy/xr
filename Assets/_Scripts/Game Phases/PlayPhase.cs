@@ -15,14 +15,14 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
     private TouchAccelerator touchAcceleratorObject;
 
     [SerializeField] private TouchSteeringWheel touchSteeringWheelObject;
-
-    [Header("Old Car Controls")] [SerializeField]
-    private GameObject throttleButton;
-
-    [SerializeField] private GameObject reverseButton;
-    [SerializeField] private GameObject rightButton;
-    [SerializeField] private GameObject leftButton;
-    [SerializeField] private GameObject brakeButton;
+    //
+    // [Header("Old Car Controls")] [SerializeField]
+    // private GameObject throttleButton;
+    //
+    // [SerializeField] private GameObject reverseButton;
+    // [SerializeField] private GameObject rightButton;
+    // [SerializeField] private GameObject leftButton;
+    // [SerializeField] private GameObject brakeButton;
 
 
     private PrometeoCarController car_;
@@ -130,20 +130,20 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
         carOutline_.enabled = false;
     }
 
-    private void SetUpCarControlsOld()
-    {
-        var cars = FindObjectsOfType<CustomCarController>();
-        if (cars.Length == 0)
-        {
-            XLogger.LogWarning(Category.GamePhase, "No cars found");
-            return;
-        }
-
-        car_old_ = cars[0];
-        car_old_.enabled = true;
-        for (var i = 1; i < cars.Length; i++)
-            cars[i].enabled = false;
-
-        car_old_.SetUpTouchControls(throttleButton, reverseButton, rightButton, leftButton, brakeButton);
-    }
+    // private void SetUpCarControlsOld()
+    // {
+    //     var cars = FindObjectsOfType<CustomCarController>();
+    //     if (cars.Length == 0)
+    //     {
+    //         XLogger.LogWarning(Category.GamePhase, "No cars found");
+    //         return;
+    //     }
+    //
+    //     car_old_ = cars[0];
+    //     car_old_.enabled = true;
+    //     for (var i = 1; i < cars.Length; i++)
+    //         cars[i].enabled = false;
+    //
+    //     car_old_.SetUpTouchControls(throttleButton, reverseButton, rightButton, leftButton, brakeButton);
+    // }
 }

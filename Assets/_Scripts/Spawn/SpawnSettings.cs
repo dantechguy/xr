@@ -7,6 +7,7 @@ public class SpawnSettings : ScriptableObject
 {
     public float globalScale = 1.0f;
     public List<GameObject> prefabs;
+    public GameObject customCar;
     public int activePrefabIndex;
     public bool selectRightAfterSpawn;
     [Header("Tracks")]
@@ -16,11 +17,14 @@ public class SpawnSettings : ScriptableObject
 
     public GameObject GetActivePrefab()
     {
-        if (activePrefabIndex < 0 || activePrefabIndex >= prefabs.Count)
+        if (activePrefabIndex < 0 || activePrefabIndex > prefabs.Count)
         {
             XLogger.LogError(Category.Spawn, "Active prefab index is out of range");
             return null;
         }
+        if (activePrefabIndex == prefabs.Count)
+            return customCar;
+        
         return prefabs[activePrefabIndex];
     }
 

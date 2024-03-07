@@ -29,7 +29,8 @@ public class GamePhaseManger : MonoBehaviour
         Spawn = 0,
         Select = 1,
         Play = 2,
-        PlaneSelect = 3
+        PlaneSelect = 3,
+        Scan = 4,
     }
 
     public interface IGamePhase
@@ -48,7 +49,8 @@ public class GamePhaseManger : MonoBehaviour
             GetComponent<SpawnPhase>(),
             GetComponent<SelectPhase>(),
             GetComponent<PlayPhase>(),
-            GetComponent<PlaneSelectPhase>()
+            GetComponent<PlaneSelectPhase>(),
+            GetComponent<ScanPhase>()
         };
         
         foreach (IGamePhase phase in gamePhases_)
@@ -90,5 +92,15 @@ public class GamePhaseManger : MonoBehaviour
     public void SwitchToPlayPhase()
     {
         SwitchPhase(GamePhase.Play);
+    }
+    
+    public void SwitchToPlaneSelectPhase()
+    {
+        SwitchPhase(GamePhase.PlaneSelect);
+    }
+    
+    public void SwitchToScanPhase()
+    {
+        SwitchPhase(GamePhase.Scan);
     }
 }
