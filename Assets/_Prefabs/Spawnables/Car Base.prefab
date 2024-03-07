@@ -166,7 +166,7 @@ Transform:
   m_GameObject: {fileID: 156674505722610927}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -204,7 +204,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 4
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!114 &9131814766880154623
 MonoBehaviour:
@@ -221,11 +221,11 @@ MonoBehaviour:
   maxSpeed: 103
   maxReverseSpeed: 42
   accelerationMultiplier: 3
-  maxSteeringAngle: 26
+  maxSteeringAngle: 45
   steeringSpeed: 0.372
   brakeForce: 257
   decelerationMultiplier: 3
-  handbrakeDriftMultiplier: 5
+  handbrakeDriftMultiplier: 10
   bodyMassCenter: {x: 0, y: 0, z: 0}
   frontLeftMesh: {fileID: 5617703080999626506}
   frontLeftCollider: {fileID: 364565491467554444}
@@ -10807,7 +10807,7 @@ Transform:
   m_GameObject: {fileID: 6208705004223100583}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.0014, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.02, y: 0.02, z: 0.02}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11004,9 +11004,9 @@ Transform:
   m_GameObject: {fileID: 7107499369526999297}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.00017550588, y: -2, z: 0.00074189156}
-  m_LocalScale: {x: 0.036092963, y: 0.036092963, z: 0.036092963}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: 0, y: 0, z: 4.656613e-10}
+  m_LocalScale: {x: 0.036092885, y: 0.036092885, z: 0.036092885}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 2770570975478241780}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

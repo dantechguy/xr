@@ -371,7 +371,7 @@ public class ScanMesh : MonoBehaviour
 
         string json = JsonUtility.ToJson(meshAndTexture);
         File.WriteAllText(filename, json);
-        
+
         XLogger.Log(Category.Scan, $"Car saved to file {filename}");
     }
 
@@ -380,7 +380,7 @@ public class ScanMesh : MonoBehaviour
         if (File.Exists(filename))
         {
             XLogger.Log(Category.Scan, $"Opening car file {filename}");
-            
+
             BinaryFormatter formatter = new BinaryFormatter();
             string jsonData = File.ReadAllText(filename);
             MeshAndTexture meshAndTexture = JsonUtility.FromJson<MeshAndTexture>(jsonData);
@@ -397,7 +397,7 @@ public class ScanMesh : MonoBehaviour
             materialWithTexture.mainTexture = texture;
 
 
-            GameObject car = carBase;
+            GameObject car = Instantiate(carBase, new Vector3(0, 0, 0), Quaternion.identity);
 
             GameObject body = car.GetNamedChild("Body");
             body.GetComponent<MeshFilter>().mesh = mesh;
@@ -407,15 +407,27 @@ public class ScanMesh : MonoBehaviour
             float scaleFactor = Mathf.Min(colliderBounds.size.x / bounds.size.x, colliderBounds.size.y / bounds.size.y,
                 colliderBounds.size.z / bounds.size.z);
             body.transform.localScale *= scaleFactor;
+            print(scaleFactor);
 
             var bodyBounds = GetBounds(body);
             Vector3 center = bodyBounds.center;
-            body.transform.position = new Vector3(-center.x, -bodyBounds.min.y, -center.z);
+            body.transform.position = colliderBounds.center - bodyBounds.center;
+            print(bodyBounds.center);
+            print(colliderBounds.center - bodyBounds.center);
+
+            // Vector3[] vertices = mesh.vertices;
+            // Vector3 centerOfMass = Vector3.zero;
+            // foreach (Vector3 vertex in vertices)
+            // {
+            //     centerOfMass += vertex;
+            // }
+            // centerOfMass /= vertices.Length;
+            // //car.transform.Find("Body").position = -centerOfMass;
+            // print(centerOfMass);
+            // print(body.transform.localScale);
 
             var meshRenderer = body.GetComponent<MeshRenderer>();
             meshRenderer.material = materialWithTexture;
-
-            car.transform.position = new Vector3(0, 2, 0);
 
             return car;
         }
