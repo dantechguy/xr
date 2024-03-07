@@ -122,7 +122,7 @@ public class SpawnSelectionManager : MonoBehaviour
 
 
             // scale the mesh to fit the button
-            Bounds bounds = GetBounds(prefabObject);
+            Bounds bounds = Utils.GetBounds(prefabObject);
             Vector3 maxBounds = new Vector3(0.08f, 0.08f, 0.08f) * itemMeshSize;
             float scaleFactor = Mathf.Min(maxBounds.x / bounds.size.x, maxBounds.y / bounds.size.y,
                 maxBounds.z / bounds.size.z);
@@ -158,20 +158,5 @@ public class SpawnSelectionManager : MonoBehaviour
             selectItem.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal,
                 i == index ? baseSize * selectedSizeMultiplier : baseSize);
         }
-    }
-
-    Bounds GetBounds(GameObject obj)
-    {
-        var prefabMeshes = obj.GetComponentsInChildren<MeshFilter>();
-        CombineInstance[] combineInstances = new CombineInstance[prefabMeshes.Length];
-        for (int j = 0; j < prefabMeshes.Length; j++)
-        {
-            combineInstances[j].mesh = prefabMeshes[j].sharedMesh;
-            combineInstances[j].transform = prefabMeshes[j].transform.localToWorldMatrix;
-        }
-
-        Mesh combinedMesh = new Mesh();
-        combinedMesh.CombineMeshes(combineInstances, true, true);
-        return combinedMesh.bounds;
     }
 }

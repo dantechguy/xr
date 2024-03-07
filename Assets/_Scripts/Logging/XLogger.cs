@@ -24,7 +24,8 @@ namespace Logging
         GamePhase,
         Select,
         GameManager,
-        Scan
+        Scan,
+        Car
     }
 
     public interface ILogOutput

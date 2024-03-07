@@ -10,7 +10,7 @@ public class PrefabSpawner : AbstractHitConsumer
     [SerializeField] private SpawnSettings spawnSettings;
     [SerializeField] private TrackManager trackManager;
     [SerializeField] private ARAnchorManager anchorManager;
-
+    [SerializeField] private SpawnedObjectAudioPlayer audioPlayer;
     public override void OnHit(ARRaycastHit _hit)
     {
         SpawnObject(_hit);
@@ -45,6 +45,8 @@ public class PrefabSpawner : AbstractHitConsumer
         ARAnchor anchor = anchorManager.AttachAnchor(plane, _hit.pose);
         anchor.destroyOnRemoval = false;
         spawnedObject.transform.SetParent(anchor.transform);
+        
+        audioPlayer.PlaySpawnAudio(_hit.pose.position, spawnedObject);
 
         // immediately select the spawned object
         if (spawnSettings.selectRightAfterSpawn && spawnedObject.TryGetComponent(out ARSpawnedSelectable selectable))

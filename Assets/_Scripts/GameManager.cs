@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour
     private int totalLaps_;
     private int completedLaps_;
 
+    private PrometeoCarController car_;
+
     public static Action<int, int> onLapCompleted;
 
     public void Enable()
@@ -36,15 +38,18 @@ public class GameManager : MonoBehaviour
 
         foreach (var waypoint in wayPoints_)
             waypoint.Init(this);
-
     }
 
     public void StartTimer(PrometeoCarController _car)
     {
         timer.StartTimer();
-        
-        carReplay.objectReplay.trackedObject = _car.transform;
-        carReplay.RaceStart();
+
+        car_ = _car;
+        if (car_ != null)
+        {
+            carReplay.objectReplay.trackedObject = _car.transform;
+            carReplay.RaceStart();
+        }
     }
 
     public void Disable()
@@ -53,8 +58,9 @@ public class GameManager : MonoBehaviour
             waypoint.SetToNotCompleted();
 
         timer.ResetTimer();
-        
-        carReplay.RaceCancel();
+
+        if (car_ != null)
+            carReplay.RaceCancel();
     }
 
     public void SetNextWayPoint(int _index)
@@ -85,7 +91,9 @@ public class GameManager : MonoBehaviour
         {
             XLogger.Log(Category.GameManager, "Race Finished");
             timer.StopTimer();
-            carReplay.RaceFinish();
+
+            if (car_ != null)
+                carReplay.RaceFinish();
             nextWaypoint_ = -1;
             foreach (Waypoint waypoint in wayPoints_)
                 waypoint.SetToNotCompleted();
