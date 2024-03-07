@@ -3,23 +3,24 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using PathCreation;
+using Unity.VisualScripting;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 
 public static class BezierOnPlanesModifier
 {
-    public static void ModifyBezierToStopClippingThroughARPlanes(BezierPath bezierPath, List<ARPlane> planes, float distance)
+    // TODO: return void
+    public static void ModifyBezierToStopClippingThroughARPlanes(BezierPath bezierPath, List<ARPlane> planes, float distance, int maxIterations = 30)
     {
         List<ARPlane> planesToCheck = GetOnlyPlanesFacingUpward(planes);
-
-        for (int i=0; i<30; i++)
+        
+        for (int i=0; i<maxIterations; i++)
         {
-
             List<Tuple<int, float, Vector3, ARPlane>> pointsOnBezierPathBelowAPlaneWithinDistance = GetPointsOnBezierBelowPlanesWithinDistance(bezierPath, planesToCheck, distance);
 
             if (pointsOnBezierPathBelowAPlaneWithinDistance.Count == 0) break;
-
-            InsertAnchorsIntoBezierToMovePointsUpToPlane(bezierPath, pointsOnBezierPathBelowAPlaneWithinDistance);
+            
+            InsertAnchorIntoBezierToMovePointUpToPlane(bezierPath, pointsOnBezierPathBelowAPlaneWithinDistance.First());
         }
     }
 
@@ -36,9 +37,9 @@ public static class BezierOnPlanesModifier
         {
             IEnumerable<Tuple<int, float, Vector3>> pointsOnBezier = BezierEnumerator.PointsAlongBezierPath(
                 bezierPath: bezierPath, 
-                spacing: distance, 
+                spacing: distance
                 // Optimisation relies on that all bezier curve handles are horizontal
-                shouldTraverseSegment: segmentPoints => !plane.infinitePlane.SameSide(segmentPoints[0], segmentPoints[3])
+                // shouldTraverseSegment: segmentPoints => !plane.infinitePlane.SameSide(segmentPoints[0], segmentPoints[3])
             );
 
             resultPoints.AddRange(
@@ -55,25 +56,31 @@ public static class BezierOnPlanesModifier
         return resultPoints;
     }
 
-    private static void InsertAnchorsIntoBezierToMovePointsUpToPlane(BezierPath bezierPath, List<Tuple<int, float, Vector3, ARPlane>> points)
+    private static void InsertAnchorIntoBezierToMovePointUpToPlane(BezierPath bezierPath, Tuple<int, float, Vector3, ARPlane> point)
     {
-        // Iterate through points
-        // Move point to plane (i.e. move up to match y-coord)
-        // split segment on bezier curve at this point, and move point to new point position
+        int segmentIndex = point.Item1;
+        float t = point.Item2;
+        Vector3 pointOnBezier = point.Item3;
+        ARPlane plane = point.Item4;
+
+        Vector3 pointOnPlane = plane.infinitePlane.ClosestPointOnPlane(pointOnBezier) + Vector3.up * 0.1f;
+
+        bezierPath.SplitSegment(pointOnPlane, segmentIndex, t);
+        int newAnchorIndex = (segmentIndex + 1) * 3;
+        MakeControlHandlesHorizontal(bezierPath, newAnchorIndex);
         
-        foreach (Tuple<int, float, Vector3, ARPlane> point in points)
-        {
-            int segmentIndex = point.Item1;
-            float t = point.Item2;
-            Vector3 pointOnBezier = point.Item3;
-            ARPlane plane = point.Item4;
-
-            Vector3 pointOnPlane = plane.infinitePlane.ClosestPointOnPlane(pointOnBezier);
-
-            bezierPath.SplitSegment(pointOnPlane, segmentIndex, t);
-        }
     }
 
+    private static void MakeControlHandlesHorizontal(BezierPath bezierPath, int anchorIndex)
+    {
+        Vector3 anchor = bezierPath.GetPoint(anchorIndex);
+        Vector3 handle1 = bezierPath.GetPoint(anchorIndex - 1);
+        Vector3 handle2 = bezierPath.GetPoint(anchorIndex + 1);
+        
+        bezierPath.MovePoint(anchorIndex-1, new Vector3(handle1.x, anchor.y, handle1.z));
+        bezierPath.MovePoint(anchorIndex+1, new Vector3(handle2.x, anchor.y, handle2.z));
+    }
+    
     private static bool IsPointBelowPlaneWithinDistance(ARPlane plane, Vector3 point, float distance)
     {
         float distancePointIsBelowPlane = -plane.infinitePlane.GetDistanceToPoint(point);
@@ -82,5 +89,4 @@ public static class BezierOnPlanesModifier
         return (0 < distancePointIsBelowPlane && distancePointIsBelowPlane < distance)
                && (VectorMaths.IsPointInPolygon(polygon: plane.boundary.ToArray(), point: pointProjectedOntoPlane));
     }
-
 }

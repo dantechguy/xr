@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using PathCreation;
 using PathCreation.Examples;
+using UnityEngine.XR.ARFoundation;
 
 public class TrackGenerator : MonoBehaviour
 {
@@ -12,11 +13,13 @@ public class TrackGenerator : MonoBehaviour
     private MeshRenderer meshRenderer;
     private MeshCollider meshCollider;
 
-
     [Header("Material settings")]
     public Material roadMaterial;
     public Material undersideMaterial;
-
+    
+    [Header("AR settings")]
+    public ARPlaneManager arPlaneManager;
+    
     private void Start()
     {
         mesh = new Mesh();
@@ -25,30 +28,32 @@ public class TrackGenerator : MonoBehaviour
         meshCollider = GetComponent<MeshCollider>();
     }
 
-    // private void Update()
-    // {
-    //     List<Transform> checkpoints = new List<Transform> {
-    //         GameObject.Find("c1").transform,
-    //         GameObject.Find("c2").transform,
-    //         GameObject.Find("c3").transform,
-    //         GameObject.Find("c4").transform,
-    //     };
-    //     GenerateTrack(checkpoints, trackScale: 0.5f, isClosed: false);
-    // }
+    private void Update()
+    {
+        List<Transform> checkpoints = new List<Transform> {
+            GameObject.Find("c1").transform,
+            GameObject.Find("c2").transform,
+            GameObject.Find("c3").transform,
+            GameObject.Find("c4").transform,
+        };
+        GenerateTrack(checkpoints, trackScale: 0.5f, isClosed: false);
+    }
 
-    public void GenerateTrack(List<Transform> checkpoints, float trackScale, bool isClosed, float trackWidth = 1f, float trackSmoothing = 1f)
+    public void GenerateTrack(List<Transform> checkpoints, float trackScale, bool isClosed, float trackWidth = 1f, float trackSmoothing = 1f, float tableThickness = 0.5f)
     {
         if (checkpoints.Count >= 2)
         {
             float width = trackWidth * trackScale;
             float thickness = trackScale / 10;
             float smoothing = 1.5f * trackSmoothing * trackScale;
+            float planeThickness = tableThickness * trackScale;
 
             List<Vector3> points = checkpoints.ConvertAll(c => c.position);
             BezierPath bezierPath = new BezierPath(points: points, isClosed: isClosed, space: PathSpace.xyz);
             bezierPath.AutoControlLength = smoothing;
             bezierPath.ControlPointMode = BezierPath.ControlMode.Mirrored;
             ModifyBezierToRotateHandles(bezierPath: bezierPath, points: checkpoints, smoothing: smoothing);
+            BezierOnPlanesModifier.ModifyBezierToStopClippingThroughARPlanes(bezierPath, GetARPlanes(), planeThickness);
 
             VertexPath vertexPath = new VertexPath(bezierPath: bezierPath, transform: transform, maxAngleError: 0.3f, minVertexDst: 0f);
 
@@ -65,6 +70,17 @@ public class TrackGenerator : MonoBehaviour
         meshCollider.enabled = true;
         meshFilter.sharedMesh = mesh;
         meshCollider.sharedMesh = mesh;
+    }
+
+    private List<ARPlane> GetARPlanes()
+    {
+        List<ARPlane> planes = new List<ARPlane>();
+        foreach (ARPlane plane in arPlaneManager.trackables)
+        {
+            planes.Add(plane);
+        }
+
+        return planes;
     }
 
     private void ModifyBezierToRotateHandles(BezierPath bezierPath, List<Transform> points, float smoothing)
