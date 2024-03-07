@@ -14,9 +14,12 @@ using System.Collections.Generic;
 using Logging;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.XR.ARFoundation;
+using UnityEngine.XR.ARSubsystems;
 
 public class PrometeoCarController : MonoBehaviour
 {
+    private AudioSource impactSound_;
     //CAR SETUP
 
     [Space(20)]
@@ -281,6 +284,24 @@ public class PrometeoCarController : MonoBehaviour
                 RRWTireSkid.emitting = false;
             }
         }
+    }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        XLogger.Log(Category.Car, "Car collided with " + other.gameObject.name);
+        if (other.gameObject.TryGetComponent(out ARPlane plane))
+        {
+            if (plane.alignment != PlaneAlignment.Vertical) return;
+        }
+        
+        // play impact sound
+        if (impactSound_ == null)
+            impactSound_ = GetComponent<AudioSource>();
+       
+        // dynamic pitch and volume according to speed
+        impactSound_.pitch = Mathf.Lerp(0.3f, 1.5f, carSpeed / maxSpeed);
+        impactSound_.volume = Mathf.Lerp(0.0f, 1.0f, carSpeed / maxSpeed);
+        impactSound_.Play();
     }
 
     // Update is called once per frame

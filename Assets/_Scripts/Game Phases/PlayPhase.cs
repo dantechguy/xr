@@ -1,20 +1,31 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using Logging;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
 {
     [SerializeField] private GameObject playUICanvas;
     [SerializeField] private GameManager gameManager;
     [SerializeField] private GeneralSettings generalSettings;
+    [Header("Countdown")]
     [SerializeField] private TextMeshProUGUI countDownText;
-
+    [SerializeField] private Image countDownBackground;
+    [SerializeField] private float countDownInterval = 1.0f;
+    [SerializeField] private Color countDownRed;
+    [SerializeField] private Color countDownGreen;
+    
     [Header("New Car Controls")] [SerializeField]
     private TouchAccelerator touchAcceleratorObject;
 
     [SerializeField] private TouchSteeringWheel touchSteeringWheelObject;
+
+    [Header("Sounds")] [SerializeField] private AudioSource audioSource;
+
+    [SerializeField] private List<AudioClip> countSounds;
     //
     // [Header("Old Car Controls")] [SerializeField]
     // private GameObject throttleButton;
@@ -47,23 +58,36 @@ public class PlayPhase : MonoBehaviour, GamePhaseManger.IGamePhase
         gameManager.enabled = true;
         gameManager.Enable();
 
-        Transform parent = countDownText.transform.parent;
+        Transform countDown = countDownText.transform.parent;
         if (generalSettings.countDown)
         {
-            parent.gameObject.SetActive(true);
+            countDown.gameObject.SetActive(true);
             countDownText.text = "3";
-            yield return new WaitForSeconds(1);
+            countDownBackground.color = countDownRed;
+            audioSource.clip = countSounds[0];
+            audioSource.Play();
+            yield return new WaitForSeconds(countDownInterval);
             countDownText.text = "2";
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(countDownInterval);
             countDownText.text = "1";
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(countDownInterval);
+            countDownText.text = "";
+            countDownBackground.color = countDownGreen;
         }
-
-        parent.gameObject.SetActive(false);
+        else
+        {
+            countDown.gameObject.SetActive(false);
+        }
 
         SetUpCarControls();
 
         gameManager.StartTimer(car_);
+
+        if (generalSettings.countDown)
+        {
+            yield return new WaitForSeconds(countDownInterval * 0.6f);
+            countDown.gameObject.SetActive(false);
+        }
     }
 
     private void SetUpCarControls()
