@@ -36,6 +36,7 @@ public class ScanMesh : MonoBehaviour
     Texture2D atlasTexture;
 
     bool shouldExtractTexturedMesh = false;
+    private bool carLoaded = false;
 
 
     public void ExtractTexturedMesh()
@@ -367,57 +368,110 @@ public class ScanMesh : MonoBehaviour
         meshAndTexture.triangles = scannedMesh.mesh.triangles;
         meshAndTexture.normals = scannedMesh.mesh.normals;
         meshAndTexture.uv = scannedMesh.mesh.uv;
-        meshAndTexture.texture = atlasTexture;
+        meshAndTexture.textureData = atlasTexture.EncodeToPNG();
+        meshAndTexture.textureWidth = atlasTexture.width;
+        meshAndTexture.textureHeight = atlasTexture.height;
 
         string json = JsonUtility.ToJson(meshAndTexture);
-        File.WriteAllText(filename, json);
-        
-        XLogger.Log(Category.Scan, $"Car saved to file {filename}");
+        string filePath = Path.Combine(Application.persistentDataPath, filename);
+
+        File.WriteAllText(filePath, json);
+
+        XLogger.Log(Category.Scan, $"Car saved to file {filePath}");
     }
 
     public GameObject OpenCarFile(string filename)
     {
-        if (File.Exists(filename))
+        string filePath = Path.Combine(Application.persistentDataPath, filename);
+        if (File.Exists(filePath))
         {
-            XLogger.Log(Category.Scan, $"Opening car file {filename}");
-            
-            BinaryFormatter formatter = new BinaryFormatter();
-            string jsonData = File.ReadAllText(filename);
-            MeshAndTexture meshAndTexture = JsonUtility.FromJson<MeshAndTexture>(jsonData);
+            if (carLoaded)
+            {
+                return carBase;
+            }
+            else
+            {
 
-            Mesh mesh = new Mesh();
-            mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-            mesh.vertices = meshAndTexture.vertices;
-            mesh.triangles = meshAndTexture.triangles;
-            mesh.normals = meshAndTexture.normals;
-            mesh.uv = meshAndTexture.uv;
+                XLogger.Log(Category.Scan, $"Opening car file {filePath}");
 
-            Texture2D texture = meshAndTexture.texture;
-            Material materialWithTexture = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-            materialWithTexture.mainTexture = texture;
+                BinaryFormatter formatter = new BinaryFormatter();
+                string jsonData = File.ReadAllText(filePath);
+                MeshAndTexture meshAndTexture = JsonUtility.FromJson<MeshAndTexture>(jsonData);
 
+                Mesh mesh = new Mesh();
+                mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+                mesh.vertices = meshAndTexture.vertices;
+                mesh.triangles = meshAndTexture.triangles;
+                mesh.normals = meshAndTexture.normals;
+                mesh.uv = meshAndTexture.uv;
 
-            GameObject car = carBase;
+                Texture2D texture = new Texture2D(meshAndTexture.textureWidth, meshAndTexture.textureHeight);
+                texture.LoadImage(meshAndTexture.textureData);
+                Material materialWithTexture = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+                materialWithTexture.mainTexture = texture;
 
-            GameObject body = car.GetNamedChild("Body");
-            body.GetComponent<MeshFilter>().mesh = mesh;
-            var bounds = GetBounds(body);
+                GameObject body = carBase.GetNamedChild("Body");
+                body.transform.position = Vector3.zero;
+                body.transform.localScale = Vector3.one;
+                body.GetComponent<MeshFilter>().mesh = mesh;
 
-            var colliderBounds = GetBounds(car.GetNamedChild("Collider"));
-            float scaleFactor = Mathf.Min(colliderBounds.size.x / bounds.size.x, colliderBounds.size.y / bounds.size.y,
-                colliderBounds.size.z / bounds.size.z);
-            body.transform.localScale *= scaleFactor;
+                // Calculate body bounds manually?? Since we have some vertices that we dont use
+                Vector3 bodyBoundsMin = Vector3.positiveInfinity;
+                Vector3 bodyBoundsMax = Vector3.negativeInfinity;
+                var vertices = mesh.vertices;
+                var triangles = mesh.triangles;
+                for (int i = 0; i < triangles.Length; i++)
+                {
+                    Vector3 vertex = vertices[triangles[i]];
+                    if (bodyBoundsMin.x > vertex.x)
+                        bodyBoundsMin.x = vertex.x;
+                    if (bodyBoundsMin.y > vertex.y)
+                        bodyBoundsMin.y = vertex.y;
+                    if (bodyBoundsMin.z > vertex.z)
+                        bodyBoundsMin.z = vertex.z;
+                    if (bodyBoundsMax.x < vertex.x)
+                        bodyBoundsMax.x = vertex.x;
+                    if (bodyBoundsMax.y < vertex.y)
+                        bodyBoundsMax.y = vertex.y;
+                    if (bodyBoundsMax.z < vertex.z)
+                        bodyBoundsMax.z = vertex.z;
+                }
+                Vector3 manualBodySize = bodyBoundsMax - bodyBoundsMin;
 
-            var bodyBounds = GetBounds(body);
-            Vector3 center = bodyBounds.center;
-            body.transform.position = new Vector3(-center.x, -bodyBounds.min.y, -center.z);
+                var colliderBounds = carBase.GetNamedChild("Collider").GetComponent<BoxCollider>().size * carBase.GetNamedChild("Collider").transform.localScale.x;
+                var colliderCenter = GetBounds(carBase.GetNamedChild("Collider")).center;
+                float scaleFactor = Mathf.Min(colliderBounds.x / manualBodySize.x,
+                    colliderBounds.z / manualBodySize.z);
+                body.transform.localScale *= scaleFactor;
+                print("AAAAAAAAAAAAAA");
+                print(scaleFactor);
+                print(colliderBounds);
+                print(manualBodySize);
 
-            var meshRenderer = body.GetComponent<MeshRenderer>();
-            meshRenderer.material = materialWithTexture;
+                Vector3 bodyCenter = (bodyBoundsMax + bodyBoundsMin) / 2;
+                Vector3 offset = (colliderCenter - bodyCenter) * scaleFactor;
+                body.transform.position = new Vector3(offset.x, GetBounds(carBase.GetNamedChild("Collider")).min.y * 0.02f - bodyBoundsMin.y * scaleFactor, offset.z);
+                print(bodyCenter);
+                print(colliderCenter - bodyCenter);
 
-            car.transform.position = new Vector3(0, 2, 0);
+                // Vector3[] vertices = mesh.vertices;
+                // Vector3 centerOfMass = Vector3.zero;
+                // foreach (Vector3 vertex in vertices)
+                // {
+                //     centerOfMass += vertex;
+                // }
+                // centerOfMass /= vertices.Length;
+                // //carBase.transform.Find("Body").position = -centerOfMass;
+                // print(centerOfMass);
+                // print(body.transform.localScale);
 
-            return car;
+                var meshRenderer = body.GetComponent<MeshRenderer>();
+                meshRenderer.material = materialWithTexture;
+
+                carLoaded = true;
+
+                return carBase;
+            }
         }
         else
         {
@@ -435,6 +489,7 @@ public class ScanMesh : MonoBehaviour
 
 
 
+
 [Serializable]
 public class MeshAndTexture
 {
@@ -442,5 +497,7 @@ public class MeshAndTexture
     public int[] triangles;
     public Vector3[] normals;
     public Vector2[] uv;
-    public Texture2D texture;
+    public byte[] textureData;
+    public int textureWidth;
+    public int textureHeight;
 }
