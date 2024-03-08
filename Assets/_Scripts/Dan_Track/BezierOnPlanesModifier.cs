@@ -56,14 +56,14 @@ public static class BezierOnPlanesModifier
         return resultPoints;
     }
 
-    private static void InsertAnchorIntoBezierToMovePointUpToPlane(BezierPath bezierPath, Tuple<int, float, Vector3, ARPlane> point)
+    private static void InsertAnchorIntoBezierToMovePointUpToPlane(BezierPath bezierPath, Tuple<int, float, Vector3, ARPlane> point, float distanceAbovePlane = 0f)
     {
         int segmentIndex = point.Item1;
         float t = point.Item2;
         Vector3 pointOnBezier = point.Item3;
         ARPlane plane = point.Item4;
 
-        Vector3 pointOnPlane = plane.infinitePlane.ClosestPointOnPlane(pointOnBezier) + Vector3.up * 0.1f;
+        Vector3 pointOnPlane = plane.infinitePlane.ClosestPointOnPlane(pointOnBezier) + Vector3.up * distanceAbovePlane;
 
         bezierPath.SplitSegment(pointOnPlane, segmentIndex, t);
         int newAnchorIndex = (segmentIndex + 1) * 3;
@@ -81,12 +81,12 @@ public static class BezierOnPlanesModifier
         bezierPath.MovePoint(anchorIndex+1, new Vector3(handle2.x, anchor.y, handle2.z));
     }
     
-    private static bool IsPointBelowPlaneWithinDistance(ARPlane plane, Vector3 point, float distance)
+    private static bool IsPointBelowPlaneWithinDistance(ARPlane plane, Vector3 point, float distance, float minDistance = 0.01f)
     {
         float distancePointIsBelowPlane = -plane.infinitePlane.GetDistanceToPoint(point);
         Vector2 pointProjectedOntoPlane = VectorMaths.ProjectPointToPlaneSpace(point, plane);
 
-        return (0 < distancePointIsBelowPlane && distancePointIsBelowPlane < distance)
+        return (minDistance < distancePointIsBelowPlane && distancePointIsBelowPlane < distance)
                && (VectorMaths.IsPointInPolygon(polygon: plane.boundary.ToArray(), point: pointProjectedOntoPlane));
     }
 }

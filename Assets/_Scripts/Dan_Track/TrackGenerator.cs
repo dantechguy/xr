@@ -39,21 +39,20 @@ public class TrackGenerator : MonoBehaviour
     //     GenerateTrack(checkpoints, trackScale: 0.5f, isClosed: false);
     // }
 
-    public void GenerateTrack(List<Transform> checkpoints, float trackScale, bool isClosed, float trackWidth = 1f, float trackSmoothing = 1f, float tableThickness = 0.5f)
+    public void GenerateTrack(List<Transform> checkpoints, float trackScale, bool isClosed, float trackWidth = 1f, float trackSmoothing = 1f, float planeClipThickness = 0.5f)
     {
         if (checkpoints.Count >= 2)
         {
             float width = trackWidth * trackScale;
             float thickness = trackScale / 10;
             float smoothing = 1.5f * trackSmoothing * trackScale;
-            float planeThickness = tableThickness * trackScale;
 
             List<Vector3> points = checkpoints.ConvertAll(c => c.position);
             BezierPath bezierPath = new BezierPath(points: points, isClosed: isClosed, space: PathSpace.xyz);
             bezierPath.AutoControlLength = smoothing;
             bezierPath.ControlPointMode = BezierPath.ControlMode.Mirrored;
             ModifyBezierToRotateHandles(bezierPath: bezierPath, points: checkpoints, smoothing: smoothing);
-            BezierOnPlanesModifier.ModifyBezierToStopClippingThroughARPlanes(bezierPath, GetARPlanes(), planeThickness);
+            BezierOnPlanesModifier.ModifyBezierToStopClippingThroughARPlanes(bezierPath, GetARPlanes(), planeClipThickness);
 
             VertexPath vertexPath = new VertexPath(bezierPath: bezierPath, transform: transform, maxAngleError: 0.3f, minVertexDst: 0f);
 
