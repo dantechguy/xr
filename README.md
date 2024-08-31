@@ -1,50 +1,30 @@
-# xr
+# ARc Racer 
 
-Unity version: `2022.3.18f1 LTS`
+> An :AR track-creation + racing game made in Unity by 3 computer science students at University of Cambridge, as coursework for the Extended Reality module. 
 
-## Collaboration
+See the pitch presentation here: https://www.figma.com/proto/Xv8EO9IKshWY4Pxc1znhpI/ARc-Racer?page-id=0%3A1&node-id=50-260&starting-point-node-id=1%3A2&t=6JvXcHmM1rl6MpXg-1
 
-We should avoid editing the same scene at once. 
+![Title](https://github.com/user-attachments/assets/458f8653-f84b-4333-82f0-06c6a5bd5707)
 
-Each of us work/experiment on a separate scene, marked with our names. (*e.g. `Lei_AR`*)
 
-Example workflow:
-1. Lei works on the debug console feature, then saves the `DebugConsole` gameobject as a prefab
-2. Dan and Josh drags the prefab into their scenes, and now the feature exists in their scene as well
-3. If Lei updates the debug console, he can update the prefab and the changes will show up in all scenes
+## Create a race track in your room
 
-I (Lei) have set up 2 scenes: `Dan_Track` and `Josh_Car`, and put some basic 3D models in it.
+https://github.com/user-attachments/assets/4a2edefb-d889-4c4f-8555-dfcb990822f7
 
-## Handling Input
+## Compete with your own best time
 
-I (Lei) suggest using Unity's [Input System](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.7/manual/index.html), it is better than the default `Unity.Input`. (Can be event-based rather than polling, and can map both mouse and touch to the same action)
+https://github.com/user-attachments/assets/270bb170-0f64-47fd-b547-57262de03b3f
 
-`Assets -> AR Input Actions` is the action asset we are using. 
+## Drive on dense meshes
 
-I am working on writing an input manager script so we can abstract it away, and you don't need to know the details of how the input system work.
+https://github.com/user-attachments/assets/e5704603-9e2e-41ca-b7cf-e787dae82960
 
-## Logging
+## Scan anything as a car
 
-I (Lei) suggest using my custom static logging class `XLogger`, instead of using `Debug` directly.
+https://github.com/user-attachments/assets/e210d4de-2af9-4442-a499-54f8c64c0de9
 
-Usage is very simple: `XLogger.Log("Hello")` ,`XLogger.Log(Category.UI, "Hello")`  
-- there are also `LogWarning` and `LogError`
-- feel free to add categories to the `Category` enum
-- the benefits is first there is a category classification, and we can optionally hook the output to a debug console, so we can see the logs in the phone builds.
+## Realistic lighting
 
-Remember also to drag the `DebugConsole` Prefab into your scenes. 
+![image](https://github.com/user-attachments/assets/e69a00c5-b6e0-4c45-ae3e-d4ed4bcf57cb)
 
-The global settings for logging is stored as a ScriptableObject in `Assets/Settings/LogSettings`, you can edit it in the inspector. 
-
-## Important Unity Concepts
-
-Here are some key concepts I (Lei) suggest looking up:
-- Component system and the `MonoBehaviour` class
-- Physics: Colliders and RigidBodies
-- Materials 
-- the `ScriptableObject` class
-- Revise OOP and design patterns
-
-## UI
-
-Unity UI can be a bit tricky at times, especially the layouts. Feel free to contack me (Lei) if you need help with UI. The good news is that we don't need to write html and css. 
+![image](https://github.com/user-attachments/assets/4af2b7f7-fc2e-4dfe-8de9-50b3023e1e4b)
