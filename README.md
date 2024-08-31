@@ -1,6 +1,6 @@
 # ARc Racer 
 
-> An :AR track-creation + racing game made in Unity by 3 computer science students at University of Cambridge, as coursework for the Extended Reality module. 
+> An AR track-creation + racing game made in Unity by 3 computer science students at University of Cambridge, as coursework for the Extended Reality module. 
 
 See the pitch presentation here: https://www.figma.com/proto/Xv8EO9IKshWY4Pxc1znhpI/ARc-Racer?page-id=0%3A1&node-id=50-260&starting-point-node-id=1%3A2&t=6JvXcHmM1rl6MpXg-1
 
